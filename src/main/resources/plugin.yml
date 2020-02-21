@@ -1,0 +1,6 @@
+name: EzChat
+author: FixedDev
+main: me.fixeddev.ezchat.ChatPlugin
+version: ${project.version}
+softdepend:
+  - PlaceholderAPI
