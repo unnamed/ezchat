@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ChatFormatSerializer {
 
-    public BaseComponent constructJsonMessageWithoutPlaceholders(ChatFormat chatFormat, Player player) {
+    public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
         EasyTextComponent prefix = new EasyTextComponent();
         prefix.append(color(chatFormat.getPrefix()));
 
@@ -48,42 +48,6 @@ public class ChatFormatSerializer {
 
         setClickAction(chatFormat.getSuffixClickAction(), suffix, color(replacePlaceholders(player, chatFormat.getSuffixClickActionContent())));
 
-        return prefix.append(playerName).append(suffix).build();
-    }
-
-    public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
-        ReplacingEasyTextComponent prefix = new ReplacingEasyTextComponent(player);
-        prefix.append(chatFormat.getPrefix());
-
-        if (!chatFormat.getPrefixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player);
-
-            createHover(chatFormat.getPrefixTooltip(), prefix, hoverComponent);
-        }
-
-        setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
-
-        ReplacingEasyTextComponent playerName = new ReplacingEasyTextComponent(player);
-        playerName.append(chatFormat.getPlayerName());
-
-        if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player);
-
-            createHover(chatFormat.getPlayerNameTooltip(), playerName, hoverComponent);
-        }
-
-        setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
-
-        ReplacingEasyTextComponent suffix = new ReplacingEasyTextComponent(player);
-        suffix.append(chatFormat.getSuffix());
-
-        if (!chatFormat.getSuffixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player);
-
-            createHover(chatFormat.getSuffixTooltip(), suffix, hoverComponent);
-        }
-
-        setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
         return prefix.append(playerName).append(suffix).build();
     }
 
