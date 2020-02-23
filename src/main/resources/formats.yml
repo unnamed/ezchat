@@ -18,4 +18,3 @@ formats:
     chat-color: ''
     permission: default
     use-placeholderapi: false
-    allow-relational-placeholders: false
