@@ -30,69 +30,39 @@ public abstract class AbstractChatListener implements Listener {
 
         Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
-        ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player);
-        BaseComponent chatFormatComponent;
+        ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
-        String message = event.getMessage();
+        String message = ChatColor.translateAlternateColorCodes('&', chatFormat.getChatColor()) + event.getMessage();
 
         if (player.hasPermission("ezchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        message = ChatColor.translateAlternateColorCodes('&', chatFormat.getChatColor()) + message;
-
         BaseComponent messageComponent = EasyTextComponent.appendAll(TextComponent.fromLegacyText(message));
 
-        boolean eventAlreadyCalled = false;
+        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 
-        if (chatFormat.isUsePlaceholderApi()) {
+        Bukkit.getPluginManager().callEvent(chatEvent);
+
+        if (chatEvent.isCancelled()) {
+            return;
+        }
+
+        BaseComponent chatFormatComponent = null;
+
+        if(!chatFormat.isUsePlaceholderApi()){
             chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player);
-
-            if (chatFormat.isAllowRelationalPlaceholders()) {
-                AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, chatFormatComponent, true);
-
-                Bukkit.getPluginManager().callEvent(chatEvent);
-
-                eventAlreadyCalled = true;
-
-                if (chatEvent.isCancelled()) {
-                    return;
-                }
-
-                // Only create and send the format in this way if the format is still the same
-                // Otherwise, proceed as a normal format
-                if (chatEvent.isFormatFromChatFormat()) {
-                    for (Player recipient : event.getRecipients()) {
-                        chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipient);
-                        chatFormatComponent.addExtra(messageComponent);
-
-                        recipient.spigot().sendMessage(chatFormatComponent);
-                    }
-
-                    return;
-                }
-
-                chatFormatComponent = chatEvent.getFormat();
-            }
-        } else {
-            chatFormatComponent = chatFormatSerializer.constructJsonMessageWithoutPlaceholders(chatFormat, player);
+            chatFormatComponent.addExtra(messageComponent);
         }
-
-        if (!eventAlreadyCalled) {
-            AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, chatFormatComponent, true);
-
-            Bukkit.getPluginManager().callEvent(chatEvent);
-
-            if (chatEvent.isCancelled()) {
-                return;
-            }
-
-            chatFormatComponent = chatEvent.getFormat();
-        }
-
-        chatFormatComponent.addExtra(messageComponent);
 
         for (Player recipient : event.getRecipients()) {
+            if (chatFormat.isUsePlaceholderApi()) {
+                chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipient);
+
+                chatFormatComponent.addExtra(messageComponent);
+            }
+
+
             recipient.spigot().sendMessage(chatFormatComponent);
         }
     }
