@@ -48,7 +48,6 @@ public class BaseChatFormat implements ChatFormat {
     private String permission;
 
     private boolean usePlaceholderApi;
-    private boolean allowRelationalPlaceholders;
 
     @SuppressWarnings("unchecked")
     public BaseChatFormat(@NotNull Map<String, Object> map) {
@@ -74,7 +73,6 @@ public class BaseChatFormat implements ChatFormat {
 
         permission = (String) map.getOrDefault("permission", "base.chatformat." + formatName);
         usePlaceholderApi = (boolean) map.getOrDefault("use-placeholderapi", false);
-        allowRelationalPlaceholders = (boolean) map.getOrDefault("allow-relational-placeholders", false);
     }
 
     public BaseChatFormat(@NotNull ChatFormat format) {
@@ -82,7 +80,23 @@ public class BaseChatFormat implements ChatFormat {
         this.priority = format.getPriority();
         this.permission = format.getPermission();
         this.usePlaceholderApi = format.isUsePlaceholderApi();
-        this.allowRelationalPlaceholders = format.isAllowRelationalPlaceholders();
+        
+        prefix = format.getPrefix();
+        prefixClickAction = format.getPrefixClickAction();
+        prefixClickActionContent = format.getPrefixClickActionContent();
+        prefixTooltip = format.getPrefixTooltip();
+
+        playerName = format.getPlayerName();
+        playerNameClickAction = format.getPlayerNameClickAction();
+        playerNameClickActionContent = format.getPlayerNameClickActionContent();
+        playerNameTooltip = format.getPlayerNameTooltip();
+
+        suffix = format.getSuffix();
+        suffixClickAction = format.getSuffixClickAction();
+        suffixClickActionContent = format.getSuffixClickActionContent();
+        suffixTooltip = format.getSuffixTooltip();
+
+        chatColor = format.getChatColor();
     }
 
     public BaseChatFormat(@NotNull String formatName, int priority) {
@@ -117,9 +131,13 @@ public class BaseChatFormat implements ChatFormat {
 
         map.put("permission", permission);
         map.put("use-placeholderapi", usePlaceholderApi);
-        map.put("allow-relational-placeholders", allowRelationalPlaceholders);
 
         return map;
+    }
+
+    @Override
+    public ChatFormat copy() {
+        return new BaseChatFormat(this);
     }
 
     @Override
@@ -298,15 +316,5 @@ public class BaseChatFormat implements ChatFormat {
     @Override
     public void setUsePlaceholderApi(boolean usePlaceholderApi) {
         this.usePlaceholderApi = usePlaceholderApi;
-    }
-
-    @Override
-    public boolean isAllowRelationalPlaceholders() {
-        return allowRelationalPlaceholders;
-    }
-
-    @Override
-    public void setAllowRelationalPlaceholders(boolean allowRelationalPlaceholders) {
-        this.allowRelationalPlaceholders = allowRelationalPlaceholders;
     }
 }

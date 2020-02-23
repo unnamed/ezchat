@@ -1,16 +1,14 @@
 package me.fixeddev.ezchat.format;
 
-import me.fixeddev.ezchat.ReplacingEasyTextComponent;
-
-import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface ChatFormat extends ConfigurationSerializable {
+
+    ChatFormat copy();
+
     String getFormatName();
 
     int getPriority();
@@ -59,8 +57,6 @@ public interface ChatFormat extends ConfigurationSerializable {
 
     boolean isUsePlaceholderApi();
 
-    boolean isAllowRelationalPlaceholders();
-
     void setPriority(int priority);
 
     void setPrefix(@NotNull String prefix);
@@ -90,6 +86,4 @@ public interface ChatFormat extends ConfigurationSerializable {
     void setPermission(@NotNull String permission);
 
     void setUsePlaceholderApi(boolean usePlaceholderApi);
-
-    void setAllowRelationalPlaceholders(boolean allowRelationalPlaceholders);
 }
