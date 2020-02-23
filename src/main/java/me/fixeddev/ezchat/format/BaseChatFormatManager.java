@@ -142,12 +142,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
             ChatFormat format = (ChatFormat) o;
 
             if (format.isUsePlaceholderApi() && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
-                plugin.getLogger().log(Level.WARNING, "The format with name {0} has PlaceholderAPI enabled but PlaceholderAPI isn't installed, not loading it.", format.getFormatName());
-                return;
-            }
-
-            if (format.isAllowRelationalPlaceholders() && !format.isUsePlaceholderApi()) {
-                plugin.getLogger().log(Level.WARNING, "The format with name {0} has Relational Placeholders enabled but it doesn't has enabled the PlaceholderAPI support, ignoring Relational Placeholders.");
+                plugin.getLogger().log(Level.WARNING, "The format with name {0} has PlaceholderAPI enabled but PlaceholderAPI isn't installed, the placeholders will not work correctly.", format.getFormatName());
             }
 
             formats.add(format);
