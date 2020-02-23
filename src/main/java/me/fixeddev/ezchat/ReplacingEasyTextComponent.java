@@ -4,11 +4,11 @@ import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class RelationalReplacingEasyTextComponent extends EasyTextComponent {
+public class ReplacingEasyTextComponent extends EasyTextComponent {
     private Player player;
     private Player playerTwo;
 
-    public RelationalReplacingEasyTextComponent(Player player, Player playerTwo) {
+    public ReplacingEasyTextComponent(Player player, Player playerTwo) {
         this.player = player;
         this.playerTwo = playerTwo;
     }
