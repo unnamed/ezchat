@@ -12,7 +12,7 @@ public class LowChatListener extends AbstractChatListener implements Listener {
         super(chatFormatManager);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event){
         formatChat(event);
     }
