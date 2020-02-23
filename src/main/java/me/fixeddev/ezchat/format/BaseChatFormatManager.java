@@ -41,6 +41,14 @@ public class BaseChatFormatManager implements ChatFormatManager {
         ConfigurationSerialization.registerClass(BaseChatFormat.class);
 
         configFile = new File(plugin.getDataFolder(), "formats.yml");
+        if(!configFile.exists()){
+            try {
+                configFile.createNewFile();
+            } catch (IOException e) {
+                plugin.getLogger().log(Level.SEVERE, "Failed to create formats.yml file!", e);
+            }
+        }
+
         try {
             chatConfig = YamlConfiguration.loadConfiguration(Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8));
         } catch (IOException e) {
