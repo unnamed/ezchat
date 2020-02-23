@@ -1,11 +1,6 @@
 package me.fixeddev.ezchat.event;
 
-import me.fixeddev.ezchat.EasyTextComponent;
 import me.fixeddev.ezchat.format.ChatFormat;
-import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -19,19 +14,15 @@ public class AsyncEzChatEvent extends Event implements Cancellable {
 
     private boolean cancelled;
 
-    private BaseComponent format;
-    private boolean isFormatFromChatFormat;
     private ChatFormat playerChatFormat;
 
     private static HandlerList handlerList = new HandlerList();
 
-    public AsyncEzChatEvent(AsyncPlayerChatEvent event, ChatFormat chatFormat, BaseComponent format, boolean isFormatFromChatFormat) {
+    public AsyncEzChatEvent(AsyncPlayerChatEvent event, ChatFormat chatFormat) {
         super(event.isAsynchronous());
         this.event = event;
 
         this.playerChatFormat = chatFormat;
-        this.format = format;
-        this.isFormatFromChatFormat = isFormatFromChatFormat;
     }
 
     @Override
@@ -44,42 +35,8 @@ public class AsyncEzChatEvent extends Event implements Cancellable {
         this.cancelled = b;
     }
 
-    public BaseComponent getFormat() {
-        return this.format;
-    }
-
     public ChatFormat getPlayerChatFormat() {
         return playerChatFormat;
-    }
-
-    public void setFormat(String format){
-        this.setFormat(format, playerChatFormat.isUsePlaceholderApi());
-    }
-
-    public void setFormat(String format, boolean usePlaceholderApi) {
-        format = format.replace("{name}", getEvent().getPlayer().getName())
-                .replace("{displayName}", getEvent().getPlayer().getDisplayName())
-                .replace("{message}", getEvent().getMessage());
-
-        format = ChatColor.translateAlternateColorCodes('&', format);
-
-        if (usePlaceholderApi) {
-            format = PlaceholderReplacer.getInstance().replacePlaceholders(getEvent().getPlayer(), format);
-        }
-
-        setFormat(EasyTextComponent.appendAll(TextComponent.fromLegacyText(format)));
-    }
-
-    public void setFormat(BaseComponent format) {
-        if (!this.format.equals(format)) {
-            isFormatFromChatFormat = false;
-        }
-
-        this.format = format;
-    }
-
-    public boolean isFormatFromChatFormat() {
-        return isFormatFromChatFormat;
     }
 
     public AsyncPlayerChatEvent getEvent() {
