@@ -1,7 +1,6 @@
 package me.fixeddev.ezchat.format;
 
 import me.fixeddev.ezchat.EasyTextComponent;
-import me.fixeddev.ezchat.RelationalReplacingEasyTextComponent;
 import me.fixeddev.ezchat.ReplacingEasyTextComponent;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -52,33 +51,33 @@ public class ChatFormatSerializer {
     }
 
     public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player, Player playerTwo) {
-        ReplacingEasyTextComponent prefix = new RelationalReplacingEasyTextComponent(player, playerTwo);
+        ReplacingEasyTextComponent prefix = new ReplacingEasyTextComponent(player, playerTwo);
         prefix.append(chatFormat.getPrefix());
 
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new RelationalReplacingEasyTextComponent(player, playerTwo);
+            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
 
             createHover(chatFormat.getPrefixTooltip(), prefix, hoverComponent);
         }
 
         setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
 
-        ReplacingEasyTextComponent playerName = new RelationalReplacingEasyTextComponent(player, playerTwo);
+        ReplacingEasyTextComponent playerName = new ReplacingEasyTextComponent(player, playerTwo);
         playerName.append(chatFormat.getPlayerName());
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new RelationalReplacingEasyTextComponent(player, playerTwo);
+            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
 
             createHover(chatFormat.getPlayerNameTooltip(), playerName, hoverComponent);
         }
 
         setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
 
-        ReplacingEasyTextComponent suffix = new RelationalReplacingEasyTextComponent(player, playerTwo);
+        ReplacingEasyTextComponent suffix = new ReplacingEasyTextComponent(player, playerTwo);
         suffix.append(chatFormat.getSuffix());
 
         if (!chatFormat.getSuffixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new RelationalReplacingEasyTextComponent(player, playerTwo);
+            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
 
             createHover(chatFormat.getSuffixTooltip(), suffix, hoverComponent);
         }
