@@ -76,7 +76,6 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             prefixClickAction = ClickAction.valueOf(prefixClick);
-            prefixClickActionContent = "";
         }
 
         prefixTooltip = (List<String>) map.getOrDefault("prefix-tooltip", prefixTooltip);
@@ -99,7 +98,6 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             playerNameClickAction = ClickAction.valueOf(playerNameClick);
-            playerNameClickActionContent = "";
         }
 
         playerNameTooltip = (List<String>) map.getOrDefault("player-name-tooltip", prefixTooltip);
@@ -122,7 +120,6 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             suffixClickAction = ClickAction.valueOf(suffixClick);
-            suffixClickActionContent = "";
         }
 
         suffixTooltip = (List<String>) map.getOrDefault("suffix-tooltip", suffixTooltip);
