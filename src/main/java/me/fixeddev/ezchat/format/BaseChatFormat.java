@@ -67,7 +67,7 @@ public class BaseChatFormat implements ChatFormat {
             Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
 
             if (matcher.matches()) {
-                String action = matcher.group(1);
+                String action = matcher.group(1).replace("[", "").replace("]", "");
                 prefixClickActionContent = matcher.replaceFirst("");
 
                 if (!action.isEmpty()) {
@@ -89,7 +89,7 @@ public class BaseChatFormat implements ChatFormat {
             Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
 
             if (matcher.matches()) {
-                String action = matcher.group(1);
+                String action = matcher.group(1).replace("[", "").replace("]", "");
                 playerNameClickActionContent = matcher.replaceFirst("");
 
                 if (!action.isEmpty()) {
@@ -111,7 +111,7 @@ public class BaseChatFormat implements ChatFormat {
             Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
 
             if (matcher.matches()) {
-                String action = matcher.group(1);
+                String action = matcher.group(1).replace("[", "").replace("]", "");
                 suffixClickActionContent = matcher.replaceFirst("");
 
                 if (!action.isEmpty()) {
