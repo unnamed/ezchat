@@ -68,7 +68,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                prefixClickActionContent = prefixClick.replace("[" + action + "]", "");
+                prefixClickActionContent = prefixClick.replace("[" + action + "]", "").trim();
 
                 if (!action.isEmpty()) {
                     prefixClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -91,7 +91,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                playerNameClickActionContent = playerNameClick.replace("[" + action + "]", "");
+                playerNameClickActionContent = playerNameClick.replace("[" + action + "]", "").trim();
 
                 if (!action.isEmpty()) {
                     playerNameClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -114,7 +114,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                suffixClickActionContent = suffixClick.replace("[" + action + "]", "");
+                suffixClickActionContent = suffixClick.replace("[" + action + "]", "").trim();
 
                 if (!action.isEmpty()) {
                     suffixClickAction = ClickAction.valueOf(action).getAliasOf();
