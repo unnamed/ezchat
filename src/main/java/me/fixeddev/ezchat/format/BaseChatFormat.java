@@ -51,7 +51,7 @@ public class BaseChatFormat implements ChatFormat {
 
     private boolean usePlaceholderApi;
 
-    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] [\\w ]*");
+    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] ([\\w ]*)");
 
     @SuppressWarnings("unchecked")
     public BaseChatFormat(@NotNull Map<String, Object> map) {
@@ -59,7 +59,7 @@ public class BaseChatFormat implements ChatFormat {
         priority = (int) map.get("priority");
 
         prefix = (String) map.getOrDefault("prefix", "");
-        prefixClickActionContent = (String) map.getOrDefault("prefix-click-action-content", null);
+        prefixClickActionContent = (String) map.get("prefix-click-action-content");
         String prefixClick = (String) map.getOrDefault("prefix-click-action", "NONE");
 
         // New format loading
@@ -68,7 +68,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                prefixClickActionContent = matcher.replaceFirst("");
+                prefixClickActionContent = matcher.group(2);
 
                 if (!action.isEmpty()) {
                     prefixClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -82,7 +82,7 @@ public class BaseChatFormat implements ChatFormat {
 
         playerName = (String) map.getOrDefault("player-name", "");
         String playerNameClick = (String) map.getOrDefault("player-name-click-action", "NONE");
-        playerNameClickActionContent = (String) map.getOrDefault("player-name-click-action-content", "");
+        playerNameClickActionContent = (String) map.get("player-name-click-action-content");
 
         // New format loading
         if (playerNameClickActionContent == null) {
@@ -90,7 +90,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                playerNameClickActionContent = matcher.replaceFirst("");
+                playerNameClickActionContent = matcher.group(2);
 
                 if (!action.isEmpty()) {
                     playerNameClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -103,7 +103,7 @@ public class BaseChatFormat implements ChatFormat {
         playerNameTooltip = (List<String>) map.getOrDefault("player-name-tooltip", prefixTooltip);
 
         suffix = (String) map.getOrDefault("suffix", "");
-        suffixClickActionContent = (String) map.getOrDefault("suffix-click-action-content", "");
+        suffixClickActionContent = (String) map.get("suffix-click-action-content");
         String suffixClick = (String) map.getOrDefault("suffix-click-action", "NONE");
 
         // New format loading
@@ -112,7 +112,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                suffixClickActionContent = matcher.replaceFirst("");
+                suffixClickActionContent =  matcher.group(2);
 
                 if (!action.isEmpty()) {
                     suffixClickAction = ClickAction.valueOf(action).getAliasOf();
