@@ -18,6 +18,7 @@ public enum ClickAction {
         } else {
             this.aliasOf = aliasOf;
             aliasOf.shortVersion = this;
+            shortVersion = this;
         }
     }
 
