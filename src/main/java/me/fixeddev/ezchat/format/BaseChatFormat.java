@@ -51,7 +51,7 @@ public class BaseChatFormat implements ChatFormat {
 
     private boolean usePlaceholderApi;
 
-    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] ([\\w ]*)");
+    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\]");
 
     @SuppressWarnings("unchecked")
     public BaseChatFormat(@NotNull Map<String, Object> map) {
@@ -68,7 +68,7 @@ public class BaseChatFormat implements ChatFormat {
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                prefixClickActionContent = matcher.group(2);
+                prefixClickActionContent = prefixClick.replace("[" + action + "]", "");
 
                 if (!action.isEmpty()) {
                     prefixClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -76,6 +76,7 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             prefixClickAction = ClickAction.valueOf(prefixClick);
+            prefixClickActionContent = "";
         }
 
         prefixTooltip = (List<String>) map.getOrDefault("prefix-tooltip", prefixTooltip);
@@ -86,11 +87,11 @@ public class BaseChatFormat implements ChatFormat {
 
         // New format loading
         if (playerNameClickActionContent == null) {
-            Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
+            Matcher matcher = ACTION_CONTENT.matcher(playerNameClick);
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                playerNameClickActionContent = matcher.group(2);
+                playerNameClickActionContent = playerNameClick.replace("[" + action + "]", "");
 
                 if (!action.isEmpty()) {
                     playerNameClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -98,6 +99,7 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             playerNameClickAction = ClickAction.valueOf(playerNameClick);
+            playerNameClickActionContent = "";
         }
 
         playerNameTooltip = (List<String>) map.getOrDefault("player-name-tooltip", prefixTooltip);
@@ -108,11 +110,11 @@ public class BaseChatFormat implements ChatFormat {
 
         // New format loading
         if (suffixClickActionContent == null) {
-            Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
+            Matcher matcher = ACTION_CONTENT.matcher(suffixClick);
 
             if (matcher.matches()) {
                 String action = matcher.group(1).replace("[", "").replace("]", "");
-                suffixClickActionContent =  matcher.group(2);
+                suffixClickActionContent = suffixClick.replace("[" + action + "]", "");
 
                 if (!action.isEmpty()) {
                     suffixClickAction = ClickAction.valueOf(action).getAliasOf();
@@ -120,6 +122,7 @@ public class BaseChatFormat implements ChatFormat {
             }
         } else {
             suffixClickAction = ClickAction.valueOf(suffixClick);
+            suffixClickActionContent = "";
         }
 
         suffixTooltip = (List<String>) map.getOrDefault("suffix-tooltip", suffixTooltip);
