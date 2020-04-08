@@ -5,6 +5,7 @@ import me.fixeddev.ebcm.CommandManager;
 import me.fixeddev.ebcm.SimpleCommandManager;
 import me.fixeddev.ebcm.bukkit.BukkitAuthorizer;
 import me.fixeddev.ebcm.bukkit.BukkitCommandManager;
+import me.fixeddev.ebcm.bukkit.BukkitMessager;
 import me.fixeddev.ebcm.bukkit.parameter.provider.BukkitModule;
 import me.fixeddev.ebcm.parameter.provider.ParameterProviderRegistry;
 import me.fixeddev.ebcm.parametric.ParametricCommandBuilder;
@@ -50,7 +51,7 @@ public class ChatPlugin extends JavaPlugin {
     private void registerCommands() {
         registry = ParameterProviderRegistry.createRegistry();
 
-        commandManager = new SimpleCommandManager(new BukkitAuthorizer(), registry);
+        commandManager = new SimpleCommandManager(new BukkitAuthorizer(), new BukkitMessager(), registry);
         commandManager = new BukkitCommandManager(commandManager, getName());
 
         registry.installModule(new BukkitModule());

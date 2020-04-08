@@ -4,16 +4,13 @@ formats:
     name: default
     priority: 999999
     prefix: ''
-    prefix-click-action: NONE
-    prefix-click-action-content: ''
+    prefix-click-action: ''
     prefix-tooltip: []
     player-name: '{displayName}'
-    player-name-click-action: NONE
-    player-name-click-action-content: ''
+    player-name-click-action: ''
     player-name-tooltip: []
     suffix: ': '
-    suffix-click-action: NONE
-    suffix-click-action-content: ''
+    suffix-click-action: ''
     suffix-tooltip: []
     chat-color: ''
     permission: default
