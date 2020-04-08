@@ -51,7 +51,7 @@ public class BaseChatFormat implements ChatFormat {
 
     private boolean usePlaceholderApi;
 
-    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] [\\s\\S+]");
+    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] [.+]", Pattern.DOTALL);
 
     @SuppressWarnings("unchecked")
     public BaseChatFormat(@NotNull Map<String, Object> map) {
