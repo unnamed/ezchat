@@ -10,17 +10,23 @@ public enum ClickAction {
     NONE(null);
 
     private ClickAction aliasOf;
+    private ClickAction shortVersion;
 
     ClickAction(ClickAction aliasOf){
         if(aliasOf == null){
             this.aliasOf = this;
         } else {
             this.aliasOf = aliasOf;
+            aliasOf.shortVersion = this;
         }
     }
 
     public ClickAction getAliasOf() {
         return aliasOf;
+    }
+
+    public ClickAction getShortVersion() {
+        return shortVersion;
     }
 
 }
