@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class BaseChatFormat implements ChatFormat {
@@ -49,24 +51,77 @@ public class BaseChatFormat implements ChatFormat {
 
     private boolean usePlaceholderApi;
 
+    private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] [\\w ]*");
+
     @SuppressWarnings("unchecked")
     public BaseChatFormat(@NotNull Map<String, Object> map) {
         formatName = (String) map.get("name");
         priority = (int) map.get("priority");
 
         prefix = (String) map.getOrDefault("prefix", "");
-        prefixClickAction = ClickAction.valueOf((String) map.getOrDefault("prefix-click-action", "NONE"));
-        prefixClickActionContent = (String) map.getOrDefault("prefix-click-action-content", "");
+        prefixClickActionContent = (String) map.getOrDefault("prefix-click-action-content", null);
+        String prefixClick = (String) map.getOrDefault("prefix-click-action", "NONE");
+
+        // New format loading
+        if (prefixClickActionContent == null) {
+            Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
+
+            if (matcher.matches()) {
+                String action = matcher.group(1);
+                prefixClickActionContent = matcher.replaceFirst("");
+
+                if (!action.isEmpty()) {
+                    prefixClickAction = ClickAction.valueOf(action).getAliasOf();
+                }
+            }
+        } else {
+            prefixClickAction = ClickAction.valueOf(prefixClick);
+        }
+
         prefixTooltip = (List<String>) map.getOrDefault("prefix-tooltip", prefixTooltip);
 
         playerName = (String) map.getOrDefault("player-name", "");
-        playerNameClickAction = ClickAction.valueOf((String) map.getOrDefault("player-name-click-action", "NONE"));
+        String playerNameClick = (String) map.getOrDefault("player-name-click-action", "NONE");
         playerNameClickActionContent = (String) map.getOrDefault("player-name-click-action-content", "");
+
+        // New format loading
+        if (playerNameClickActionContent == null) {
+            Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
+
+            if (matcher.matches()) {
+                String action = matcher.group(1);
+                playerNameClickActionContent = matcher.replaceFirst("");
+
+                if (!action.isEmpty()) {
+                    playerNameClickAction = ClickAction.valueOf(action).getAliasOf();
+                }
+            }
+        } else {
+            playerNameClickAction = ClickAction.valueOf(playerNameClick);
+        }
+
         playerNameTooltip = (List<String>) map.getOrDefault("player-name-tooltip", prefixTooltip);
 
         suffix = (String) map.getOrDefault("suffix", "");
-        suffixClickAction = ClickAction.valueOf((String) map.getOrDefault("suffix-click-action", "NONE"));
         suffixClickActionContent = (String) map.getOrDefault("suffix-click-action-content", "");
+        String suffixClick = (String) map.getOrDefault("suffix-click-action", "NONE");
+
+        // New format loading
+        if (suffixClickActionContent == null) {
+            Matcher matcher = ACTION_CONTENT.matcher(prefixClick);
+
+            if (matcher.matches()) {
+                String action = matcher.group(1);
+                suffixClickActionContent = matcher.replaceFirst("");
+
+                if (!action.isEmpty()) {
+                    suffixClickAction = ClickAction.valueOf(action).getAliasOf();
+                }
+            }
+        } else {
+            suffixClickAction = ClickAction.valueOf(suffixClick);
+        }
+
         suffixTooltip = (List<String>) map.getOrDefault("suffix-tooltip", suffixTooltip);
 
         chatColor = (String) map.getOrDefault("chat-color", "");
@@ -80,7 +135,7 @@ public class BaseChatFormat implements ChatFormat {
         this.priority = format.getPriority();
         this.permission = format.getPermission();
         this.usePlaceholderApi = format.isUsePlaceholderApi();
-        
+
         prefix = format.getPrefix();
         prefixClickAction = format.getPrefixClickAction();
         prefixClickActionContent = format.getPrefixClickActionContent();
