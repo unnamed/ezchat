@@ -168,18 +168,15 @@ public class BaseChatFormat implements ChatFormat {
         map.put("priority", priority);
 
         map.put("prefix", prefix);
-        map.put("prefix-click-action", prefixClickAction.toString());
-        map.put("prefix-click-action-content", prefixClickActionContent);
+        map.put("prefix-click-action", "[" + prefixClickAction.getShortVersion() + "] " + prefixClickActionContent);
         map.put("prefix-tooltip", prefixTooltip);
 
         map.put("player-name", playerName);
-        map.put("player-name-click-action", playerNameClickAction.toString());
-        map.put("player-name-click-action-content", playerNameClickActionContent);
+        map.put("player-name-click-action", "[" + playerNameClickAction.getShortVersion() + "] " + playerNameClickActionContent);
         map.put("player-name-tooltip", playerNameTooltip);
 
         map.put("suffix", suffix);
-        map.put("suffix-click-action", suffixClickAction.toString());
-        map.put("suffix-click-action-content", suffixClickActionContent);
+        map.put("suffix-click-action", "[" + prefixClickAction.getShortVersion() + "] " + suffixClickActionContent);
         map.put("suffix-tooltip", suffixTooltip);
 
         map.put("chat-color", chatColor);
