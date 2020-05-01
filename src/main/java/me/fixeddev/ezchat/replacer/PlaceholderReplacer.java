@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 
 public abstract class PlaceholderReplacer {
 
@@ -15,7 +16,9 @@ public abstract class PlaceholderReplacer {
         if (instance == null) {
             lock.lock();
             if (instance == null) {
-                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderApi")) {
+                if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                    Bukkit.getLogger().log(Level.INFO, "[EzChat] Successfully hooked with PlaceholderAPI");
+
                     instance = new PlaceholderApiReplacer();
                 } else {
                     instance = new DummyReplacer();
