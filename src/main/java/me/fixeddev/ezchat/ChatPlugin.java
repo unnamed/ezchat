@@ -18,6 +18,7 @@ import me.fixeddev.ezchat.listener.HighChatListener;
 import me.fixeddev.ezchat.listener.HighestChatListener;
 import me.fixeddev.ezchat.listener.LowChatListener;
 import me.fixeddev.ezchat.listener.LowestChatListener;
+import me.fixeddev.ezchat.listener.MonitorChatListener;
 import me.fixeddev.ezchat.listener.NormalChatListener;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventPriority;
@@ -78,6 +79,8 @@ public class ChatPlugin extends JavaPlugin {
                 return new HighChatListener(chatFormatManager);
             case HIGHEST:
                 return new HighestChatListener(chatFormatManager);
+            case MONITOR:
+                return new MonitorChatListener(chatFormatManager);
             default:
                 getLogger().log(Level.SEVERE, "Unknown priority {0}, disabling plugin.", eventPriority);
                 this.setEnabled(false);
