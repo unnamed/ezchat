@@ -90,7 +90,7 @@ public class ChatFormatSerializer {
         return PlaceholderReplacer.getInstance().replacePlaceholders(player, message);
     }
 
-    private String color(String message) {
+    public static String color(String message) {
         for (int i = 0; i < message.length(); i++) {
             if (message.charAt(i) == '&' && message.charAt(i + 1) == '[' && message.charAt(i + 16) == ']') {
                 String newMessage = message.substring(i, i + 17);
