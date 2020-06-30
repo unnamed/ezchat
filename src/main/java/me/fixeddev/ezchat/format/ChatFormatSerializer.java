@@ -3,8 +3,8 @@ package me.fixeddev.ezchat.format;
 import me.fixeddev.ezchat.EasyTextComponent;
 import me.fixeddev.ezchat.ReplacingEasyTextComponent;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -91,6 +91,17 @@ public class ChatFormatSerializer {
     }
 
     private String color(String message) {
+        for (int i = 0; i < message.length(); i++) {
+            if (message.charAt(i) == '&' && message.charAt(i + 1) == '[' && message.charAt(i + 16) == ']') {
+                String newMessage = message.substring(i, i + 17);
+
+                newMessage = newMessage.replaceAll("[\\[\\],]", "")
+                        .replace("&", ChatColor.COLOR_CHAR + "x");
+
+                message = message.replace(message.substring(i, i + 17), newMessage);
+            }
+        }
+
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
