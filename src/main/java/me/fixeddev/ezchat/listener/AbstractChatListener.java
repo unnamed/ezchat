@@ -32,7 +32,7 @@ public abstract class AbstractChatListener implements Listener {
 
         ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
-        String message = ChatColor.translateAlternateColorCodes('&', chatFormat.getChatColor()) + event.getMessage();
+        String message = ChatFormatSerializer.color(chatFormat.getChatColor()) + event.getMessage();
 
         if (player.hasPermission("ezchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
@@ -50,7 +50,7 @@ public abstract class AbstractChatListener implements Listener {
 
         BaseComponent chatFormatComponent = null;
 
-        if(!chatFormat.isUsePlaceholderApi()){
+        if (!chatFormat.isUsePlaceholderApi()) {
             chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player);
             chatFormatComponent.addExtra(messageComponent);
         }
