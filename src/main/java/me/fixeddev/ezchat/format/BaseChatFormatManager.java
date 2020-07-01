@@ -53,7 +53,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
         }
 
         try {
-            Path formatsPath = Paths.get(plugin.getClass().getResource("formats.yml").toURI());
+            Path formatsPath = Paths.get(getClass().getClassLoader().getResource("formats.yml").toURI());
             Files.copy(formatsPath, configFile.toPath());
         } catch (URISyntaxException | IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to copy default formats configuration!", e);
