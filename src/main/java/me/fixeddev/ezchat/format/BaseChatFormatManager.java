@@ -46,16 +46,16 @@ public class BaseChatFormatManager implements ChatFormatManager {
         configFile = new File(plugin.getDataFolder(), "formats.yml");
         if(!configFile.exists()){
             try {
-                configFile.createNewFile();
+                try {
+                    Files.copy(getClass().getClassLoader().getResourceAsStream("formats.yml"), configFile.toPath());
+                } catch (IOException e) {
+                    plugin.getLogger().log(Level.SEVERE, "Failed to copy default formats configuration!", e);
+
+                    configFile.createNewFile();
+                }
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to create formats.yml file!", e);
             }
-        }
-
-        try {
-            Files.copy(getClass().getClassLoader().getResourceAsStream("formats.yml"), configFile.toPath());
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to copy default formats configuration!", e);
         }
 
         try {
