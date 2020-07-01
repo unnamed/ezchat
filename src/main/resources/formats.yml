@@ -23,7 +23,6 @@ formats:
   chat-color: '&7'
   permission: default
   use-placeholderapi: true
-formats:
 - ==: me.fixeddev.ezchat.format.BaseChatFormat
   name: vip
   priority: 999998
