@@ -10,8 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -47,6 +50,13 @@ public class BaseChatFormatManager implements ChatFormatManager {
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to create formats.yml file!", e);
             }
+        }
+
+        try {
+            Path formatsPath = Paths.get(plugin.getClass().getResource("formats.yml").toURI());
+            Files.copy(formatsPath, configFile.toPath());
+        } catch (URISyntaxException | IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to copy default formats configuration!", e);
         }
 
         try {
@@ -135,6 +145,8 @@ public class BaseChatFormatManager implements ChatFormatManager {
     }
 
     private void loadConfig() throws IOException {
+        defaultPriorityOrder = PriorityOrder.valueOf(chatConfig.getString("default-priority-ordering", "LOWER_FIRST"));
+
         List<?> formatsRawList = chatConfig.getList("formats");
         if(formatsRawList == null){
             formatsRawList = new ArrayList<>();
