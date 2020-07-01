@@ -1,17 +1,47 @@
+## LOWER_FIRST: Selects the format with the lowest priority that the user has
+## HIGHER_FIRST: Selects the format with the highest priority that the user has
 default-priority-ordering: LOWER_FIRST
 formats:
-  - ==: me.fixeddev.ezchat.format.BaseChatFormat
-    name: default
-    priority: 999999
-    prefix: ''
-    prefix-click-action: ''
-    prefix-tooltip: []
-    player-name: '{displayName}'
-    player-name-click-action: ''
-    player-name-tooltip: []
-    suffix: ': '
-    suffix-click-action: ''
-    suffix-tooltip: []
-    chat-color: ''
-    permission: default
-    use-placeholderapi: false
+- ==: me.fixeddev.ezchat.format.BaseChatFormat
+  name: default
+  priority: 999999
+  prefix: ''
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  prefix-click-action: ''
+  prefix-tooltip: []
+  player-name: '{displayName}'
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  player-name-click-action: '[SUGGEST] /msg {name}'
+  player-name-tooltip: []
+  suffix: ": "
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  suffix-click-action: ''
+  suffix-tooltip: []
+  chat-color: '&7'
+  permission: default
+  use-placeholderapi: true
+formats:
+- ==: me.fixeddev.ezchat.format.BaseChatFormat
+  name: vip
+  priority: 999998
+  prefix: ''
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  prefix-click-action: ''
+  prefix-tooltip: []
+  player-name: '{displayName}'
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  player-name-click-action: '[SUGGEST] /msg {name}'
+  player-name-tooltip: []
+  suffix: ": "
+  ## Supported values:
+  ## EXECUTE, SUGGEST, OPEN
+  suffix-click-action: ''
+  suffix-tooltip: []
+  chat-color: '&f'
+  permission: vip
+  use-placeholderapi: true
