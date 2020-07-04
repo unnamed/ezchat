@@ -5,10 +5,9 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -38,7 +37,7 @@ public abstract class AbstractChatListener implements Listener {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        BaseComponent messageComponent = EasyTextComponent.appendAll(TextComponent.fromLegacyText(message));
+        BaseComponent messageComponent = EasyTextComponent.appendAll(EasyTextComponent.fromLegacyText(message, ChatColor.WHITE));
 
         AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 
