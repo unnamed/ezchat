@@ -20,11 +20,17 @@ import me.fixeddev.ezchat.listener.LowChatListener;
 import me.fixeddev.ezchat.listener.LowestChatListener;
 import me.fixeddev.ezchat.listener.MonitorChatListener;
 import me.fixeddev.ezchat.listener.NormalChatListener;
+import me.fixeddev.ezchat.uuid.BasicUUIDCache;
+import me.fixeddev.ezchat.uuid.DelegateUUIDCache;
+import me.fixeddev.ezchat.uuid.UUIDCache;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventPriority;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class ChatPlugin extends JavaPlugin {
@@ -35,11 +41,16 @@ public class ChatPlugin extends JavaPlugin {
     private CommandManager commandManager;
     private ParametricCommandBuilder commandBuilder;
 
+    private Supplier<UUIDCache> uuidCacheSupplier = () -> new BasicUUIDCache();
+
+    private UUIDCache uuidCache;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
         chatFormatManager = new BaseChatFormatManager(this);
+        Bukkit.getServicesManager().register(ChatFormatManager.class, chatFormatManager, this, ServicePriority.Normal);
 
         AbstractChatListener chatListener = getChatListener();
         if (chatListener != null) {
@@ -90,4 +101,32 @@ public class ChatPlugin extends JavaPlugin {
         return null;
     }
 
+    public static UUIDCache registerCache() {
+        ChatPlugin plugin = JavaPlugin.getPlugin(ChatPlugin.class);
+
+        UUIDCache uuidCache = plugin.getUuidCache();
+        Bukkit.getServicesManager().register(UUIDCache.class, new DelegateUUIDCache(plugin::getUuidCache), plugin, ServicePriority.Normal);
+
+        return uuidCache;
+    }
+
+    public UUIDCache getUuidCache() {
+        if (uuidCache == null) {
+            uuidCache = uuidCacheSupplier.get();
+        }
+
+        return uuidCache;
+    }
+
+    public void setUuidCache(UUIDCache uuidCache) {
+        this.uuidCache = uuidCache;
+    }
+
+    public void setUuidCacheSupplier(Supplier<UUIDCache> cacheSupplier) {
+        this.uuidCacheSupplier = cacheSupplier;
+    }
+
+    public Supplier<UUIDCache> getUuidCacheSupplier() {
+        return uuidCacheSupplier;
+    }
 }
