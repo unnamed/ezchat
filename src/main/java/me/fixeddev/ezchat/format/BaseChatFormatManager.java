@@ -1,8 +1,6 @@
 package me.fixeddev.ezchat.format;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
@@ -10,23 +8,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BaseChatFormatManager implements ChatFormatManager {
 
-    private List<ChatFormat> chatFormats;
+    private Map<String, ChatFormat> formatsByName;
 
     private ChatFormat defaultFormat;
 
@@ -44,7 +41,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
         ConfigurationSerialization.registerClass(BaseChatFormat.class);
 
         configFile = new File(plugin.getDataFolder(), "formats.yml");
-        if(!configFile.exists()){
+        if (!configFile.exists()) {
             try {
                 try {
                     Files.copy(getClass().getClassLoader().getResourceAsStream("formats.yml"), configFile.toPath());
@@ -66,11 +63,11 @@ public class BaseChatFormatManager implements ChatFormatManager {
 
         }
 
-        chatFormats = new CopyOnWriteArrayList<>();
+        formatsByName = new ConcurrentHashMap<>();
 
         defaultPriorityOrder = PriorityOrder.valueOf(chatConfig.getString("default-priority-ordering", "LOWER_FIRST"));
 
-        if(!chatConfig.isSet("default-priority-ordering")){
+        if (!chatConfig.isSet("default-priority-ordering")) {
             chatConfig.set("default-priority-ordering", "LOWER_FIRST");
             try {
                 chatConfig.save(configFile);
@@ -93,8 +90,8 @@ public class BaseChatFormatManager implements ChatFormatManager {
 
     @Override
     public ChatFormat getChatFormatForPlayer(Player player, PriorityOrder priorityOrder) {
-        Stream<ChatFormat> chatFormatStream = chatFormats.stream()
-                .filter(format -> player.hasPermission(format.getPermission()));
+        Stream<ChatFormat> chatFormatStream = formatsByName.values().stream()
+                .filter(format -> format != null && player.hasPermission(format.getPermission()));
 
         List<ChatFormat> sortedChatFormats;
 
@@ -109,25 +106,26 @@ public class BaseChatFormatManager implements ChatFormatManager {
                 sortedChatFormats = chatFormatStream.collect(Collectors.toList());
         }
 
-        for (ChatFormat chatFormat : sortedChatFormats) {
-            if (chatFormat == null) {
-                continue;
-            }
-
-            return chatFormat;
+        if(sortedChatFormats.isEmpty()){
+            return defaultFormat;
         }
 
-        return defaultFormat;
+        return sortedChatFormats.get(0);
     }
 
     @Override
-    public List<ChatFormat> getRegisteredChatFormats() {
-        return chatFormats;
+    public ChatFormat getChatFormat(String name) {
+        return null;
+    }
+
+    @Override
+    public Collection<ChatFormat> getRegisteredChatFormats() {
+        return formatsByName.values();
     }
 
     @Override
     public void registerChatFormat(ChatFormat chatFormat) {
-        chatFormats.add(chatFormat);
+        formatsByName.put(chatFormat.getFormatName(), chatFormat);
     }
 
     @Override
@@ -139,7 +137,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
 
     @Override
     public void save() throws IOException {
-        chatConfig.set("formats", chatFormats);
+        chatConfig.set("formats", new ArrayList<>(formatsByName.values()));
         chatConfig.save(configFile);
     }
 
@@ -147,11 +145,11 @@ public class BaseChatFormatManager implements ChatFormatManager {
         defaultPriorityOrder = PriorityOrder.valueOf(chatConfig.getString("default-priority-ordering", "LOWER_FIRST"));
 
         List<?> formatsRawList = chatConfig.getList("formats");
-        if(formatsRawList == null){
+        if (formatsRawList == null) {
             formatsRawList = new ArrayList<>();
         }
 
-        List<ChatFormat> formats = new ArrayList<>();
+        Map<String, ChatFormat> formatMap = new HashMap<>();
 
         formatsRawList.forEach(o -> {
             if (!(o instanceof ChatFormat)) {
@@ -164,25 +162,22 @@ public class BaseChatFormatManager implements ChatFormatManager {
                 plugin.getLogger().log(Level.WARNING, "The format with name {0} has PlaceholderAPI enabled but PlaceholderAPI isn't installed, the placeholders will not work correctly.", format.getFormatName());
             }
 
-            formats.add(format);
+            formatMap.put(format.getFormatName(), format);
         });
 
-        this.chatFormats = formats;
+        this.formatsByName = new ConcurrentHashMap<>(formatMap);
 
-        Optional<ChatFormat> optionalDefaultFormat = formats.stream().filter(chatFormat -> chatFormat.getFormatName().equalsIgnoreCase("default")).findFirst();
+        defaultFormat = formatMap.get("default");
 
-        if (!optionalDefaultFormat.isPresent()) {
+        if (defaultFormat == null) {
             plugin.getLogger().log(Level.INFO, "Default chat format doesn't exists, creating it.");
 
             ChatFormat format = new BaseChatFormat("default", 999999);
             defaultFormat = format;
 
-            chatFormats.add(format);
+            formatsByName.put("default", format);
             save();
-
-            return;
         }
 
-        defaultFormat = optionalDefaultFormat.get();
     }
 }
