@@ -8,8 +8,12 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ChatFormatSerializer {
+
+    private final static Pattern PATTERN = Pattern.compile("&\\[(\\d{4}),(\\d{4}),(\\d{4})]");
+    private final static String REPLACEMENT = ChatColor.COLOR_CHAR + "x$1$2$3";
 
     public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
         EasyTextComponent prefix = new EasyTextComponent();
@@ -91,18 +95,7 @@ public class ChatFormatSerializer {
     }
 
     public static String color(String message) {
-        for (int i = 0; i < message.length(); i++) {
-            if (message.charAt(i) == '&' && message.charAt(i + 1) == '[' && message.charAt(i + 16) == ']') {
-                String newMessage = message.substring(i, i + 17);
-
-                newMessage = newMessage.replaceAll("[\\[\\],]", "")
-                        .replace("&", ChatColor.COLOR_CHAR + "x");
-
-                message = message.replace(message.substring(i, i + 17), newMessage);
-            }
-        }
-
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return ChatColor.translateAlternateColorCodes('&', PATTERN.matcher(message).replaceAll(REPLACEMENT));
     }
 
     private void setClickAction(ClickAction action, EasyTextComponent textComponent, String content) {
