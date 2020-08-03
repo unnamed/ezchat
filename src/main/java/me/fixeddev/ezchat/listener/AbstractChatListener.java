@@ -7,6 +7,7 @@ import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -14,8 +15,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public abstract class AbstractChatListener implements Listener {
 
-    private ChatFormatManager chatFormatManager;
-    private ChatFormatSerializer chatFormatSerializer;
+    private final ChatFormatManager chatFormatManager;
+    private final ChatFormatSerializer chatFormatSerializer;
 
     public AbstractChatListener(ChatFormatManager chatFormatManager) {
         this.chatFormatManager = chatFormatManager;
@@ -37,7 +38,7 @@ public abstract class AbstractChatListener implements Listener {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        BaseComponent messageComponent = EasyTextComponent.appendAll(EasyTextComponent.fromLegacyText(message, ChatColor.WHITE));
+        BaseComponent[] messageComponent = TextComponent.fromLegacyText(message);
 
         AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 
@@ -47,22 +48,22 @@ public abstract class AbstractChatListener implements Listener {
             return;
         }
 
-        BaseComponent chatFormatComponent = null;
+        EasyTextComponent chatFormatComponent = null;
 
         if (!chatFormat.isUsePlaceholderApi()) {
             chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player);
-            chatFormatComponent.addExtra(messageComponent);
+            chatFormatComponent.append(messageComponent);
         }
 
         for (Player recipient : event.getRecipients()) {
             if (chatFormat.isUsePlaceholderApi()) {
                 chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipient);
 
-                chatFormatComponent.addExtra(messageComponent);
+                chatFormatComponent.append(messageComponent);
             }
 
 
-            recipient.spigot().sendMessage(chatFormatComponent);
+            recipient.spigot().sendMessage(chatFormatComponent.build());
         }
     }
 }

@@ -4,7 +4,6 @@ import me.fixeddev.ezchat.EasyTextComponent;
 import me.fixeddev.ezchat.ReplacingEasyTextComponent;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -12,10 +11,10 @@ import java.util.regex.Pattern;
 
 public class ChatFormatSerializer {
 
-    private final static Pattern PATTERN = Pattern.compile("&\\[(\\d{4}),(\\d{4}),(\\d{4})]");
+    private final static Pattern PATTERN = Pattern.compile("&\\[([\\dA-Fa-f]{4}),([\\dA-Fa-f]{4}),([\\dA-Fa-f]{4})]");
     private final static String REPLACEMENT = ChatColor.COLOR_CHAR + "x$1$2$3";
 
-    public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
+    public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
         EasyTextComponent prefix = new EasyTextComponent();
         prefix.append(color(chatFormat.getPrefix()));
 
@@ -51,10 +50,10 @@ public class ChatFormatSerializer {
 
         setClickAction(chatFormat.getSuffixClickAction(), suffix, color(replacePlaceholders(player, chatFormat.getSuffixClickActionContent())));
 
-        return prefix.append(playerName).append(suffix).build();
+        return prefix.append(playerName).append(suffix);
     }
 
-    public BaseComponent constructJsonMessage(ChatFormat chatFormat, Player player, Player playerTwo) {
+    public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player, Player playerTwo) {
         ReplacingEasyTextComponent prefix = new ReplacingEasyTextComponent(player, playerTwo);
         prefix.append(chatFormat.getPrefix());
 
@@ -87,7 +86,7 @@ public class ChatFormatSerializer {
         }
 
         setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
-        return prefix.append(playerName).append(suffix).build();
+        return prefix.append(playerName).append(suffix);
     }
 
     private String replacePlaceholders(Player player, String message) {
@@ -95,7 +94,9 @@ public class ChatFormatSerializer {
     }
 
     public static String color(String message) {
-        return ChatColor.translateAlternateColorCodes('&', PATTERN.matcher(message).replaceAll(REPLACEMENT));
+        return ChatColor.translateAlternateColorCodes('&', PATTERN
+                .matcher(message)
+                .replaceAll(REPLACEMENT));
     }
 
     private void setClickAction(ClickAction action, EasyTextComponent textComponent, String content) {
