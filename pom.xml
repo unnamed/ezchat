@@ -17,6 +17,10 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
@@ -51,6 +55,7 @@
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>with-dependencies</shadedClassifierName>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
         </plugins>
@@ -64,10 +69,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.fixeddev</groupId>
-            <artifactId>EBCM-Bukkit</artifactId>
-            <scope>compile</scope>
-            <version>1.8.0-SNAPSHOT</version>
+            <groupId>com.github.FixedDev.EBCM</groupId>
+            <artifactId>ebcm-bukkit</artifactId>
+            <version>1.10-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
