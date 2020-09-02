@@ -72,7 +72,7 @@
             <groupId>com.github.FixedDev.EBCM</groupId>
             <artifactId>ebcm-bukkit</artifactId>
             <version>1.10-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
