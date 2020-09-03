@@ -1,5 +1,11 @@
 package me.fixeddev.ezchat;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
 import me.fixeddev.ezchat.util.ReflectionUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -11,19 +17,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class EasyTextComponent {
 
     private static final Pattern url = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
-    private List<BaseComponent> components;
+    private final List<BaseComponent> components;
 
     public EasyTextComponent() {
         this(new TextComponent(""));
@@ -151,7 +149,14 @@ public class EasyTextComponent {
 
 
     public BaseComponent[] build() {
-        return components.toArray(new BaseComponent[0]);
+        BaseComponent[] components = this.components.toArray(new BaseComponent[0]);
+        for (int i = 1; i < components.length - 1; i++) {
+            BaseComponent baseComponent = components[i];
+            if (baseComponent.getColorRaw() == null) {
+                baseComponent.setColor(components[i - 1].getColor());
+            }
+        }
+        return components;
     }
 
     /**

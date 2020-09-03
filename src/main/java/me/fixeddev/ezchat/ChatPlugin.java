@@ -1,5 +1,8 @@
 package me.fixeddev.ezchat;
 
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.logging.Level;
 import me.fixeddev.ebcm.Command;
 import me.fixeddev.ebcm.CommandManager;
 import me.fixeddev.ebcm.SimpleCommandManager;
@@ -28,10 +31,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public class ChatPlugin extends JavaPlugin {
 
