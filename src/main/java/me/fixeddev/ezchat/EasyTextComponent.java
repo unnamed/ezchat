@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.fixeddev.ezchat.util.ReflectionUtil;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -33,7 +35,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent appendWithNewLine(@NotNull String content) {
-        return appendWithNewLine(TextComponent.fromLegacyText(content));
+        return appendWithNewLine(EasyTextComponent.fromLegacyText(content, ChatColor.WHITE));
     }
 
     @NotNull
@@ -49,7 +51,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent append(@NotNull String content) {
-        return append(TextComponent.fromLegacyText(content));
+        return append(EasyTextComponent.fromLegacyText(content, ChatColor.WHITE));
     }
 
     @NotNull
@@ -80,7 +82,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent setHoverShowText(@NotNull String content) {
-        return setHoverShowText(TextComponent.fromLegacyText(content));
+        return setHoverShowText(EasyTextComponent.fromLegacyText(content, ChatColor.WHITE));
     }
 
     @NotNull
@@ -190,5 +192,101 @@ public class EasyTextComponent {
 
         // Return a string representation of the serialized object
         return itemAsJsonObject.toString();
+    }
+
+    public static BaseComponent[] fromLegacyText(String message, ChatColor defaultColor) {
+        ArrayList<BaseComponent> components = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        TextComponent component = new TextComponent();
+        Matcher matcher = url.matcher(message);
+
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            if (c == ChatColor.COLOR_CHAR) {
+                if (++i >= message.length()) {
+                    break;
+                }
+                c = message.charAt(i);
+                if (c >= 'A' && c <= 'Z') {
+                    c += 32;
+                }
+                ChatColor format;
+                if (c == 'x' && i + 12 < message.length()) {
+                    StringBuilder hex = new StringBuilder("#");
+                    for (int j = 0; j < 6; j++) {
+                        hex.append(message.charAt(i + 2 + (j * 2)));
+                    }
+                    try {
+                        format = ChatColor.of(hex.toString());
+                    } catch (IllegalArgumentException ex) {
+                        format = null;
+                    }
+
+                    i += 12;
+                } else {
+                    format = ChatColor.getByChar(c);
+                }
+                if (format == null) {
+                    continue;
+                }
+                if (builder.length() > 0) {
+                    TextComponent old = component;
+                    component = new TextComponent(old);
+                    old.setText(builder.toString());
+                    builder = new StringBuilder();
+                    components.add(old);
+                }
+                if (format == ChatColor.BOLD) {
+                    component.setBold(true);
+                } else if (format == ChatColor.ITALIC) {
+                    component.setItalic(true);
+                } else if (format == ChatColor.UNDERLINE) {
+                    component.setUnderlined(true);
+                } else if (format == ChatColor.STRIKETHROUGH) {
+                    component.setStrikethrough(true);
+                } else if (format == ChatColor.MAGIC) {
+                    component.setObfuscated(true);
+                } else if (format == ChatColor.RESET) {
+                    format = defaultColor;
+                    component = new TextComponent();
+                    component.setColor(format);
+                } else {
+                    component = new TextComponent();
+                    component.setColor(format);
+                }
+                continue;
+            }
+            int pos = message.indexOf(' ', i);
+            if (pos == -1) {
+                pos = message.length();
+            }
+            if (matcher.region(i, pos).find()) { //Web link handling
+
+                if (builder.length() > 0) {
+                    TextComponent old = component;
+                    component = new TextComponent(old);
+                    old.setText(builder.toString());
+                    builder = new StringBuilder();
+                    components.add(old);
+                }
+
+                TextComponent old = component;
+                component = new TextComponent(old);
+                String urlString = message.substring(i, pos);
+                component.setText(urlString);
+                component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                        urlString.startsWith("http") ? urlString : "http://" + urlString));
+                components.add(component);
+                i += pos - i - 1;
+                component = old;
+                continue;
+            }
+            builder.append(c);
+        }
+
+        component.setText(builder.toString());
+        components.add(component);
+
+        return components.toArray(new BaseComponent[components.size()]);
     }
 }
