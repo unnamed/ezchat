@@ -38,7 +38,7 @@ public abstract class AbstractChatListener implements Listener {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        BaseComponent[] messageComponent = TextComponent.fromLegacyText(message, ChatColor.WHITE);
+        BaseComponent[] messageComponent = TextComponent.fromLegacyText(message);
 
         AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.fixeddev.ezchat.util.ReflectionUtil;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -34,7 +33,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent appendWithNewLine(@NotNull String content) {
-        return appendWithNewLine(TextComponent.fromLegacyText(content, ChatColor.WHITE));
+        return appendWithNewLine(TextComponent.fromLegacyText(content));
     }
 
     @NotNull
@@ -50,7 +49,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent append(@NotNull String content) {
-        return append(TextComponent.fromLegacyText(content, ChatColor.WHITE));
+        return append(TextComponent.fromLegacyText(content));
     }
 
     @NotNull
@@ -81,7 +80,7 @@ public class EasyTextComponent {
 
     @NotNull
     public EasyTextComponent setHoverShowText(@NotNull String content) {
-        return setHoverShowText(TextComponent.fromLegacyText(content, ChatColor.WHITE));
+        return setHoverShowText(TextComponent.fromLegacyText(content));
     }
 
     @NotNull
