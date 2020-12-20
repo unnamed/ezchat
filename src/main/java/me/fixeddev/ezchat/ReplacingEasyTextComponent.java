@@ -5,8 +5,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class ReplacingEasyTextComponent extends EasyTextComponent {
-    private Player player;
-    private Player playerTwo;
+
+    private final Player player;
+    private final Player playerTwo;
 
     public ReplacingEasyTextComponent(Player player, Player playerTwo) {
         this.player = player;
@@ -14,7 +15,7 @@ public class ReplacingEasyTextComponent extends EasyTextComponent {
     }
 
     @Override
-    public EasyTextComponent appendWithNewLine(@NotNull String content) {
+    public @NotNull EasyTextComponent appendWithNewLine(@NotNull String content) {
         content = PlaceholderReplacer.getInstance().replacePlaceholders(player, content);
         content = PlaceholderReplacer.getInstance().replaceRelational(player, playerTwo, content);
 
