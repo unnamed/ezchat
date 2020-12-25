@@ -12,7 +12,17 @@ import java.util.regex.Pattern;
 public class ChatFormatSerializer {
 
     private final static Pattern PATTERN = Pattern.compile("&\\[([\\dA-Fa-f]{4}),([\\dA-Fa-f]{4}),([\\dA-Fa-f]{4})]");
+    private final static Pattern SECOND_PATTERN = Pattern.compile("&\\[([\\dA-Fa-f])([\\dA-Fa-f])," +
+            "([\\dA-Fa-f])([\\dA-Fa-f])," +
+            "([\\dA-Fa-f])([\\dA-Fa-f])]");
     private final static String REPLACEMENT = ChatColor.COLOR_CHAR + "x$1$2$3";
+    private final static String SECOND_REPLACEMENT = ChatColor.COLOR_CHAR + "x" +
+            ChatColor.COLOR_CHAR + "$1" +
+            ChatColor.COLOR_CHAR + "$2" +
+            ChatColor.COLOR_CHAR + "$3" +
+            ChatColor.COLOR_CHAR + "$4" +
+            ChatColor.COLOR_CHAR + "$5" +
+            ChatColor.COLOR_CHAR + "$6";
 
     public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
         EasyTextComponent prefix = new EasyTextComponent();
@@ -94,9 +104,11 @@ public class ChatFormatSerializer {
     }
 
     public static String color(String message) {
-        return ChatColor.translateAlternateColorCodes('&', PATTERN
-                .matcher(message)
-                .replaceAll(REPLACEMENT));
+        String newMessage = PATTERN.matcher(message).replaceAll(REPLACEMENT);
+
+        newMessage = SECOND_PATTERN.matcher(newMessage).replaceAll(SECOND_REPLACEMENT);
+
+        return ChatColor.translateAlternateColorCodes('&', newMessage);
     }
 
     private void setClickAction(ClickAction action, EasyTextComponent textComponent, String content) {
