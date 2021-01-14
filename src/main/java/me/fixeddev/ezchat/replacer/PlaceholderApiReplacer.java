@@ -1,6 +1,7 @@
 package me.fixeddev.ezchat.replacer;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import org.bukkit.entity.Player;
 
 public class PlaceholderApiReplacer extends PlaceholderReplacer {
@@ -9,11 +10,11 @@ public class PlaceholderApiReplacer extends PlaceholderReplacer {
         toReplace = toReplace.replace("{name}", player.getName());
         toReplace = toReplace.replace("{displayName}", player.getDisplayName());
 
-        return PlaceholderAPI.setPlaceholders(player, toReplace);
+        return ChatFormatSerializer.color(PlaceholderAPI.setPlaceholders(player, toReplace));
     }
 
     @Override
     public String replaceRelational(Player player, Player playerTwo, String toReplace) {
-        return PlaceholderAPI.setRelationalPlaceholders(player, playerTwo, toReplace);
+        return ChatFormatSerializer.color(PlaceholderAPI.setRelationalPlaceholders(player, playerTwo, toReplace));
     }
 }

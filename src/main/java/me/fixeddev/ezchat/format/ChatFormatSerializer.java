@@ -34,7 +34,7 @@ public class ChatFormatSerializer {
             createHover(chatFormat.getPrefixTooltip(), prefix, hoverComponent);
         }
 
-        setClickAction(chatFormat.getPrefixClickAction(), prefix, color(replacePlaceholders(player, chatFormat.getPrefixClickActionContent())));
+        setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
 
         EasyTextComponent playerName = new EasyTextComponent();
         playerName.append(color(chatFormat.getPlayerName()
@@ -47,7 +47,7 @@ public class ChatFormatSerializer {
             createHover(chatFormat.getPlayerNameTooltip(), playerName, hoverComponent);
         }
 
-        setClickAction(chatFormat.getPlayerNameClickAction(), playerName, color(replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent())));
+        setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
 
         EasyTextComponent suffix = new EasyTextComponent();
         suffix.append(color(chatFormat.getSuffix()));
@@ -58,14 +58,14 @@ public class ChatFormatSerializer {
             createHover(chatFormat.getSuffixTooltip(), suffix, hoverComponent);
         }
 
-        setClickAction(chatFormat.getSuffixClickAction(), suffix, color(replacePlaceholders(player, chatFormat.getSuffixClickActionContent())));
+        setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
 
         return prefix.append(playerName).append(suffix);
     }
 
     public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player, Player playerTwo) {
         ReplacingEasyTextComponent prefix = new ReplacingEasyTextComponent(player, playerTwo);
-        prefix.append(chatFormat.getPrefix());
+        prefix.append(color(chatFormat.getPrefix()));
 
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
             ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
@@ -76,7 +76,7 @@ public class ChatFormatSerializer {
         setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
 
         ReplacingEasyTextComponent playerName = new ReplacingEasyTextComponent(player, playerTwo);
-        playerName.append(chatFormat.getPlayerName());
+        playerName.append(color(chatFormat.getPlayerName()));
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
             ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
@@ -87,7 +87,7 @@ public class ChatFormatSerializer {
         setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
 
         ReplacingEasyTextComponent suffix = new ReplacingEasyTextComponent(player, playerTwo);
-        suffix.append(chatFormat.getSuffix());
+        suffix.append(color(chatFormat.getSuffix()));
 
         if (!chatFormat.getSuffixTooltip().isEmpty()) {
             ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
@@ -100,7 +100,7 @@ public class ChatFormatSerializer {
     }
 
     private String replacePlaceholders(Player player, String message) {
-        return PlaceholderReplacer.getInstance().replacePlaceholders(player, message);
+        return PlaceholderReplacer.getInstance().replacePlaceholders(player, color(message));
     }
 
     public static String color(String message) {
@@ -130,7 +130,7 @@ public class ChatFormatSerializer {
 
     private void createHover(List<String> hover, EasyTextComponent component, EasyTextComponent hoverComponent) {
         for (int i = 0; i < hover.size(); i++) {
-            String line = hover.get(i);
+            String line = color(hover.get(i));
 
             if (i >= hover.size() - 1) {
                 hoverComponent.append(line);

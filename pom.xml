@@ -6,7 +6,7 @@
 
     <groupId>me.fixeddev</groupId>
     <artifactId>EzChat</artifactId>
-    <version>2.4.0</version>
+    <version>2.4.2</version>
 
     <repositories>
         <repository>
@@ -56,6 +56,13 @@
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>with-dependencies</shadedClassifierName>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+
+                    <relocations>
+                        <relocation>
+                            <pattern>me.fixeddev.ebcm</pattern>
+                            <shadedPattern>me.fixeddev.ezchat.ebcm</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>
