@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import me.fixeddev.ezchat.commands.CommandRegistry;
-import me.fixeddev.ezchat.commands.EzChatCommands;
 import me.fixeddev.ezchat.dependency.DependencyDownloader;
 import me.fixeddev.ezchat.format.BaseChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatManager;
@@ -31,12 +30,19 @@ public class ChatPlugin extends JavaPlugin {
 
     private ChatFormatManager chatFormatManager;
 
-    private Supplier<UUIDCache> uuidCacheSupplier = () -> new BasicUUIDCache();
+    private Supplier<UUIDCache> uuidCacheSupplier = BasicUUIDCache::new;
 
     private UUIDCache uuidCache;
 
+    private Runnable unregisterCommands;
+
     public void onLoad() {
         downloader = new DependencyDownloader(this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
+    }
+
+    @Override
+    public void onDisable() {
+        unregisterCommands.run();
     }
 
     @Override
@@ -81,8 +87,10 @@ public class ChatPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        CommandRegistry registry = new CommandRegistry(this);
-        registry.registerCommand(new EzChatCommands(this, chatFormatManager));
+        CommandRegistry registry = new CommandRegistry(this, chatFormatManager);
+        registry.registerCommands();
+
+        unregisterCommands = registry::unregisterCommands;
     }
 
     private AbstractChatListener getChatListener() {

@@ -2,19 +2,24 @@ package me.fixeddev.ezchat.commands;
 
 import me.fixeddev.commandflow.CommandManager;
 import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilder;
-import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.part.PartInjector;
 import me.fixeddev.commandflow.annotated.part.defaults.DefaultsModule;
 import me.fixeddev.commandflow.bukkit.BukkitCommandManager;
 import me.fixeddev.commandflow.bukkit.factory.BukkitModule;
 import me.fixeddev.commandflow.command.Command;
-import org.bukkit.plugin.Plugin;
+import me.fixeddev.ezchat.ChatPlugin;
+import me.fixeddev.ezchat.format.ChatFormatManager;
 
 public class CommandRegistry {
     private final CommandManager commandManager;
     private final AnnotatedCommandTreeBuilder treeBuilder;
 
-    public CommandRegistry(Plugin plugin) {
+    private final ChatPlugin plugin;
+    private final ChatFormatManager manager;
+
+    public CommandRegistry(ChatPlugin plugin, ChatFormatManager manager) {
+        this.plugin = plugin;
+        this.manager = manager;
         PartInjector injector = PartInjector.create();
         injector.install(new DefaultsModule());
         injector.install(new BukkitModule());
@@ -23,12 +28,12 @@ public class CommandRegistry {
         treeBuilder = AnnotatedCommandTreeBuilder.create(injector);
     }
 
-    public void registerCommand(CommandClass commandClass){
-        commandManager.registerCommands(treeBuilder.fromClass(commandClass));
+    public void registerCommands() {
+        commandManager.registerCommands(treeBuilder.fromClass(new me.fixeddev.ezchat.commands.EzChatCommands(plugin, manager)));
     }
 
-    public void registerCommand(Command command){
-        commandManager.registerCommand(command);
+    public void unregisterCommands() {
+        commandManager.unregisterAll();
     }
 
     public CommandManager getCommandManager() {
