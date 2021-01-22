@@ -183,6 +183,13 @@ public class DependencyDownloader {
                 "text-serializer-legacy",
                 false));
 
+        dependencies.add(new MavenDependency(repos,
+                "net.kyori",
+                "text-serializer-gson",
+                "3.0.0-stripped",
+                "text-serializer-gson",
+                false));
+
         addRelocation("me.fixeddev.commandflow", "me.fixeddev.ezchat.commandflow");
     }
 
