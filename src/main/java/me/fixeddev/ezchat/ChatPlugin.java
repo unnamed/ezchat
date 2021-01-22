@@ -1,19 +1,12 @@
 package me.fixeddev.ezchat;
 
-import java.util.List;
+import java.io.File;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import me.fixeddev.ebcm.Command;
-import me.fixeddev.ebcm.CommandManager;
-import me.fixeddev.ebcm.SimpleCommandManager;
-import me.fixeddev.ebcm.bukkit.BukkitAuthorizer;
-import me.fixeddev.ebcm.bukkit.BukkitCommandManager;
-import me.fixeddev.ebcm.bukkit.BukkitMessager;
-import me.fixeddev.ebcm.bukkit.parameter.provider.BukkitModule;
-import me.fixeddev.ebcm.parameter.provider.ParameterProviderRegistry;
-import me.fixeddev.ebcm.parametric.ParametricCommandBuilder;
-import me.fixeddev.ebcm.parametric.ReflectionParametricCommandBuilder;
+
+import me.fixeddev.ezchat.commands.CommandRegistry;
 import me.fixeddev.ezchat.commands.EzChatCommands;
+import me.fixeddev.ezchat.dependency.DependencyDownloader;
 import me.fixeddev.ezchat.format.BaseChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.listener.AbstractChatListener;
@@ -34,18 +27,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ChatPlugin extends JavaPlugin {
 
-    private ChatFormatManager chatFormatManager;
+    private DependencyDownloader downloader;
 
-    private ParameterProviderRegistry registry;
-    private CommandManager commandManager;
-    private ParametricCommandBuilder commandBuilder;
+    private ChatFormatManager chatFormatManager;
 
     private Supplier<UUIDCache> uuidCacheSupplier = () -> new BasicUUIDCache();
 
     private UUIDCache uuidCache;
 
+    public void onLoad() {
+        downloader = new DependencyDownloader(this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
+    }
+
     @Override
     public void onEnable() {
+        downloader.downloadDependencies();
+
         saveDefaultConfig();
 
         chatFormatManager = new BaseChatFormatManager(this);
@@ -59,19 +56,33 @@ public class ChatPlugin extends JavaPlugin {
         registerCommands();
     }
 
+    public DependencyDownloader getDownloader() {
+        return downloader;
+    }
+
+    public UUIDCache getUuidCache() {
+        if (uuidCache == null) {
+            uuidCache = uuidCacheSupplier.get();
+        }
+
+        return uuidCache;
+    }
+
+    public void setUuidCache(UUIDCache uuidCache) {
+        this.uuidCache = uuidCache;
+    }
+
+    public void setUuidCacheSupplier(Supplier<UUIDCache> cacheSupplier) {
+        this.uuidCacheSupplier = cacheSupplier;
+    }
+
+    public Supplier<UUIDCache> getUuidCacheSupplier() {
+        return uuidCacheSupplier;
+    }
+
     private void registerCommands() {
-        registry = ParameterProviderRegistry.createRegistry();
-
-        commandManager = new SimpleCommandManager(new BukkitAuthorizer(), new BukkitMessager(), registry);
-        commandManager = new BukkitCommandManager(commandManager, getName());
-
-        registry.installModule(new BukkitModule());
-
-        commandBuilder = new ReflectionParametricCommandBuilder();
-
-        List<Command> commands = commandBuilder.fromClass(new EzChatCommands(this, chatFormatManager));
-
-        commandManager.registerCommands(commands);
+        CommandRegistry registry = new CommandRegistry(this);
+        registry.registerCommand(new EzChatCommands(this, chatFormatManager));
     }
 
     private AbstractChatListener getChatListener() {
@@ -109,23 +120,4 @@ public class ChatPlugin extends JavaPlugin {
         return uuidCache;
     }
 
-    public UUIDCache getUuidCache() {
-        if (uuidCache == null) {
-            uuidCache = uuidCacheSupplier.get();
-        }
-
-        return uuidCache;
-    }
-
-    public void setUuidCache(UUIDCache uuidCache) {
-        this.uuidCache = uuidCache;
-    }
-
-    public void setUuidCacheSupplier(Supplier<UUIDCache> cacheSupplier) {
-        this.uuidCacheSupplier = cacheSupplier;
-    }
-
-    public Supplier<UUIDCache> getUuidCacheSupplier() {
-        return uuidCacheSupplier;
-    }
 }

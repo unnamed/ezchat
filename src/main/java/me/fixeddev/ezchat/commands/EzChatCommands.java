@@ -1,8 +1,7 @@
 package me.fixeddev.ezchat.commands;
 
-import me.fixeddev.ebcm.parametric.CommandClass;
-import me.fixeddev.ebcm.parametric.annotation.ACommand;
-import me.fixeddev.ebcm.parametric.annotation.Injected;
+import me.fixeddev.commandflow.annotated.CommandClass;
+import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,25 +10,25 @@ import org.bukkit.plugin.Plugin;
 import java.io.IOException;
 import java.util.logging.Level;
 
-@ACommand(names = "ezchat")
+@Command(names = "ezchat")
 public class EzChatCommands implements CommandClass {
-    private Plugin plugin;
-    private ChatFormatManager chatFormatManager;
+    private final Plugin plugin;
+    private final ChatFormatManager chatFormatManager;
 
     public EzChatCommands(Plugin plugin, ChatFormatManager chatFormatManager) {
         this.plugin = plugin;
         this.chatFormatManager = chatFormatManager;
     }
 
-    @ACommand(names = "")
-    public boolean mainCommand(@Injected(true) CommandSender sender) {
+    @Command(names = "")
+    public boolean mainCommand(CommandSender sender) {
         sender.sendMessage(ChatColor.YELLOW + "EzChat version v" + plugin.getDescription().getVersion() + " by FixedDev.");
 
         return true;
     }
 
-    @ACommand(names = "reload", permission = "ezchat.reload")
-    public boolean reload(@Injected(true) CommandSender sender) {
+    @Command(names = "reload", permission = "ezchat.reload")
+    public boolean reload(CommandSender sender) {
         sender.sendMessage(ChatColor.YELLOW + "Reloading EzChat chat formats.");
         try {
             chatFormatManager.reload();
