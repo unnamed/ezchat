@@ -86,6 +86,7 @@ public class DependencyDownloader {
 
         List<Dependency> dependenciesToDownload = new ArrayList<>();
         List<Dependency> dependenciesToRelocate = new ArrayList<>();
+        List<Dependency> readyDependencies = new ArrayList<>();
 
         for (Dependency dependency : dependencies) {
             boolean existsRelocated = existsRelocated(dependency);
@@ -100,6 +101,8 @@ public class DependencyDownloader {
 
                 continue;
             }
+
+            readyDependencies.add(dependency);
         }
 
         for (File file : handler.download(dependenciesToDownload)) {
@@ -126,6 +129,13 @@ public class DependencyDownloader {
             } catch (IOException e) {
                 details.add(e);
             }
+        }
+
+        for (Dependency dependency : readyDependencies) {
+            String artifactName = dependency.getArtifactName();
+
+            File relocatedFile = new File(dependencyFolder, artifactName + "-relocated.jar");
+            loader.load(relocatedFile, details);
         }
 
         if (details.errorCount() > 0) {
