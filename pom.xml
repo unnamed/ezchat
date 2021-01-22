@@ -18,6 +18,14 @@
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
+            <id>unnamed-snapshots</id>
+            <url>https://repo.unnamed.team/repository/unnamed-snapshots/</url>
+        </repository>
+        <repository>
+            <id>unnamed-releases</id>
+            <url>https://repo.unnamed.team/repository/unnamed-releases/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -76,10 +84,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.FixedDev.EBCM</groupId>
-            <artifactId>ebcm-bukkit</artifactId>
-            <version>1.10-SNAPSHOT</version>
+            <groupId>me.lucko</groupId>
+            <artifactId>jar-relocator</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>team.unnamed.dependency</groupId>
+            <artifactId>downloader</artifactId>
+            <version>0.1.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.fixeddev</groupId>
+            <artifactId>commandflow-bukkit</artifactId>
+            <version>0.4.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
