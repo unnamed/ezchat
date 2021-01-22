@@ -67,8 +67,8 @@
 
                     <relocations>
                         <relocation>
-                            <pattern>me.fixeddev.ebcm</pattern>
-                            <shadedPattern>me.fixeddev.ezchat.ebcm</shadedPattern>
+                            <pattern>me.fixeddev.commandflow</pattern>
+                            <shadedPattern>me.fixeddev.ezchat.commandflow</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
