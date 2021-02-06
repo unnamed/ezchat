@@ -1,5 +1,6 @@
 package me.fixeddev.ezchat.dependency;
 
+import com.google.common.io.Files;
 import team.unnamed.dependency.Dependency;
 import team.unnamed.dependency.DependencyHandler;
 import team.unnamed.dependency.MavenDependency;
@@ -10,6 +11,7 @@ import team.unnamed.dependency.logging.LogStrategy;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DependencyDownloader {
+
+    private static final int DEPENDENCIES_VERSION = 1;
 
     private final DependencyHandler handler;
     private final Set<Dependency> dependencies;
@@ -32,6 +36,22 @@ public class DependencyDownloader {
         this.classLoader = classLoader;
         this.dependencyFolder = dependencyFolder;
 
+        File dependencyVersionFile = new File(dependencyFolder, "dependency-version");
+        try {
+            if (dependencyVersionFile.exists()) {
+                String line = Files.readFirstLine(dependencyVersionFile, Charset.defaultCharset());
+                int versionFound = Integer.parseInt(line);
+
+                if (versionFound != DEPENDENCIES_VERSION) {
+                    logger.log(Level.INFO, "The version of dependencies found was " + versionFound + " this version of EzChat uses " + DEPENDENCIES_VERSION);
+                    logger.log(Level.INFO, "Deleting folder and redownloading!");
+                    deleteFolder(dependencyFolder);
+                }
+            }
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to read dependency version", e);
+        }
+
         handler = DependencyHandler
                 .builder()
                 .setClassLoader(classLoader)
@@ -43,6 +63,18 @@ public class DependencyDownloader {
         dependencies = new HashSet<>();
         relocationList = new ArrayList<>();
         setDefaultDependencies();
+    }
+
+    private void deleteFolder(File folder) {
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                deleteFolder(file);
+
+                continue;
+            }
+
+            file.delete();
+        }
     }
 
     public void addDependency(Dependency dependency) {
@@ -90,13 +122,13 @@ public class DependencyDownloader {
 
         for (Dependency dependency : dependencies) {
             boolean existsRelocated = existsRelocated(dependency);
-            if(!exists(dependency) && !existsRelocated){
+            if (!exists(dependency) && !existsRelocated) {
                 dependenciesToDownload.add(dependency);
 
                 continue;
             }
 
-            if(!existsRelocated){
+            if (!existsRelocated) {
                 dependenciesToRelocate.add(dependency);
 
                 continue;
@@ -142,7 +174,19 @@ public class DependencyDownloader {
             logger.log(Level.SEVERE, "An error occurred while downloading dependencies!", details.toDownloadException());
         } else {
             logger.log(Level.INFO, "Dependencies downloaded successfully!");
+
+            File dependencyVersionFile = new File(dependencyFolder, "dependency-version");
+            try {
+                if (!dependencyVersionFile.exists()) {
+                    dependencyVersionFile.createNewFile();
+                }
+                Files.write(DEPENDENCIES_VERSION + "", dependencyVersionFile, Charset.defaultCharset());
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "An error occurred while downloading dependencies!", e);
+            }
         }
+
+
     }
 
     private void setDefaultDependencies() {
@@ -151,7 +195,7 @@ public class DependencyDownloader {
         dependencies.add(new MavenDependency(repos,
                 "me.fixeddev",
                 "commandflow-universal",
-                "0.4.2",
+                "0.4.3",
                 "commandflow-universal",
                 false));
 
@@ -190,7 +234,11 @@ public class DependencyDownloader {
                 "text-serializer-gson",
                 false));
 
-        addRelocation("me.fixeddev.commandflow", "me.fixeddev.ezchat.commandflow");
+        String originalPackage = new String(new char[]{'m', 'e', '.'});
+        originalPackage += "fixeddev.";
+        originalPackage += "commandflow";
+
+        addRelocation(originalPackage, "me.fixeddev.ezchat.commandflow");
     }
 
     private boolean exists(Dependency dependency) {
@@ -200,12 +248,12 @@ public class DependencyDownloader {
     }
 
     private boolean existsRelocated(Dependency dependency) {
-        File dependencyFile = new File(dependencyFolder, dependency.getArtifactName()+"-relocated.jar");
+        File dependencyFile = new File(dependencyFolder, dependency.getArtifactName() + "-relocated.jar");
 
         return dependencyFile.exists();
     }
 
-    private File getDownloadedFile(Dependency dependency){
+    private File getDownloadedFile(Dependency dependency) {
         File dependencyFile = new File(dependencyFolder, dependency.getArtifactName());
 
         return dependencyFile;
