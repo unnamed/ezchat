@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 public class DependencyDownloader {
 
-    private static final int DEPENDENCIES_VERSION = 1;
+    private static final int DEPENDENCIES_VERSION = 2;
 
     private final DependencyHandler handler;
     private final Set<Dependency> dependencies;
@@ -185,8 +185,6 @@ public class DependencyDownloader {
                 logger.log(Level.SEVERE, "An error occurred while downloading dependencies!", e);
             }
         }
-
-
     }
 
     private void setDefaultDependencies() {
@@ -195,7 +193,7 @@ public class DependencyDownloader {
         dependencies.add(new MavenDependency(repos,
                 "me.fixeddev",
                 "commandflow-universal",
-                "0.4.3",
+                "0.4.5",
                 "commandflow-universal",
                 false));
 
