@@ -6,7 +6,7 @@
 
     <groupId>me.fixeddev</groupId>
     <artifactId>EzChat</artifactId>
-    <version>2.5.0</version>
+    <version>2.5.1</version>
 
     <repositories>
         <repository>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>team.unnamed.dependency</groupId>
             <artifactId>downloader</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
