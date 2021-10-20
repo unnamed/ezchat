@@ -1,2 +1,4 @@
 ## Supported values: LOWEST, LOW, NORMAL, HIGH, HIGHEST, MONITOR
 chat-event-priority: NORMAL
+## If we should use the old behaviour of EzChat of cancelling the event
+alternative-handling: false

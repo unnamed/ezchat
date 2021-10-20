@@ -6,7 +6,7 @@
 
     <groupId>me.fixeddev</groupId>
     <artifactId>EzChat</artifactId>
-    <version>2.5.1</version>
+    <version>2.5.3</version>
 
     <repositories>
         <repository>
@@ -71,6 +71,11 @@
                             <pattern>me.fixeddev.commandflow</pattern>
                             <shadedPattern>me.fixeddev.ezchat.commandflow</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>net.kyori.text</pattern>
+                            <shadedPattern>me.fixeddev.ezchat.text</shadedPattern>
+                        </relocation>
+                        
                     </relocations>
                 </configuration>
             </plugin>
@@ -100,13 +105,13 @@
             <groupId>me.fixeddev</groupId>
             <artifactId>commandflow-universal</artifactId>
             <version>0.4.5</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.fixeddev</groupId>
             <artifactId>commandflow-bukkit</artifactId>
             <version>0.4.0</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
