@@ -1,6 +1,7 @@
 package me.fixeddev.ezchat;
 
 import java.io.File;
+import java.net.URLClassLoader;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -36,8 +37,10 @@ public class ChatPlugin extends JavaPlugin {
 
     private Runnable unregisterCommands;
 
+    @Override
     public void onLoad() {
-        downloader = new DependencyDownloader(this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
+        // we know for sure that at least the java plugin classloader is an url class loader
+        downloader = new DependencyDownloader((URLClassLoader) this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ChatPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        downloader.downloadDependencies();
+        //downloader.downloadDependencies(); never start it
 
         saveDefaultConfig();
 
@@ -95,21 +98,22 @@ public class ChatPlugin extends JavaPlugin {
 
     private AbstractChatListener getChatListener() {
         FileConfiguration config = getConfig();
+        boolean alternativeHandling = config.getBoolean("alternative-handling", false);
         EventPriority eventPriority = EventPriority.valueOf(config.getString("chat-event-priority", "NORMAL"));
 
         switch (eventPriority) {
             case LOWEST:
-                return new LowestChatListener(chatFormatManager);
+                return new LowestChatListener(chatFormatManager, alternativeHandling);
             case LOW:
-                return new LowChatListener(chatFormatManager);
+                return new LowChatListener(chatFormatManager, alternativeHandling);
             case NORMAL:
-                return new NormalChatListener(chatFormatManager);
+                return new NormalChatListener(chatFormatManager, alternativeHandling);
             case HIGH:
-                return new HighChatListener(chatFormatManager);
+                return new HighChatListener(chatFormatManager, alternativeHandling);
             case HIGHEST:
-                return new HighestChatListener(chatFormatManager);
+                return new HighestChatListener(chatFormatManager, alternativeHandling);
             case MONITOR:
-                return new MonitorChatListener(chatFormatManager);
+                return new MonitorChatListener(chatFormatManager, alternativeHandling);
             default:
                 getLogger().log(Level.SEVERE, "Unknown priority {0}, disabling plugin.", eventPriority);
                 this.setEnabled(false);

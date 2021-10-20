@@ -5,13 +5,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class MonitorChatListener extends AbstractChatListener{
-    public MonitorChatListener(ChatFormatManager chatFormatManager) {
-        super(chatFormatManager);
+public class MonitorChatListener extends AbstractChatListener {
+    public MonitorChatListener(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
+        super(chatFormatManager, alternativeChatHandling);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event){
+    public void onChat(AsyncPlayerChatEvent event) {
         formatChat(event);
     }
 }

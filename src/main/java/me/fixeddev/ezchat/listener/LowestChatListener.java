@@ -8,8 +8,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class LowestChatListener extends AbstractChatListener implements Listener {
 
-    public LowestChatListener(ChatFormatManager chatFormatManager) {
-        super(chatFormatManager);
+    public LowestChatListener(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
+        super(chatFormatManager, alternativeChatHandling);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

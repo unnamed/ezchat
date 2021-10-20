@@ -13,20 +13,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class AbstractChatListener implements Listener {
 
     private final ChatFormatManager chatFormatManager;
     private final ChatFormatSerializer chatFormatSerializer;
 
-    public AbstractChatListener(ChatFormatManager chatFormatManager) {
+    private final boolean alternativeChatHandling;
+
+    public AbstractChatListener(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
         this.chatFormatManager = chatFormatManager;
 
         this.chatFormatSerializer = new ChatFormatSerializer();
+        this.alternativeChatHandling = alternativeChatHandling;
     }
 
     public void formatChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        event.setCancelled(true);
+
+        Set<Player> recipients = event.getRecipients();
+
+        if (alternativeChatHandling) {
+            event.setCancelled(true);
+        } else {
+            recipients = new HashSet<>(event.getRecipients());
+            event.getRecipients().clear();
+        }
 
         Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
@@ -40,7 +54,7 @@ public abstract class AbstractChatListener implements Listener {
 
         BaseComponent[] messageComponent = TextComponent.fromLegacyText(message);
 
-        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
+        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, recipients);
 
         Bukkit.getPluginManager().callEvent(chatEvent);
 
@@ -55,7 +69,7 @@ public abstract class AbstractChatListener implements Listener {
             chatFormatComponent.append(messageComponent);
         }
 
-        for (Player recipient : event.getRecipients()) {
+        for (Player recipient : recipients) {
             if (chatFormat.isUsePlaceholderApi()) {
                 chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipient);
 

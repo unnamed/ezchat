@@ -11,18 +11,20 @@ import java.util.Set;
 
 public class AsyncEzChatEvent extends Event implements Cancellable {
     private final AsyncPlayerChatEvent event;
+    private final ChatFormat playerChatFormat;
+
+    private Set<Player> recipients;
 
     private boolean cancelled;
+    private static final HandlerList handlerList = new HandlerList();
 
-    private ChatFormat playerChatFormat;
 
-    private static HandlerList handlerList = new HandlerList();
-
-    public AsyncEzChatEvent(AsyncPlayerChatEvent event, ChatFormat chatFormat) {
+    public AsyncEzChatEvent(AsyncPlayerChatEvent event, ChatFormat chatFormat, Set<Player> recipients) {
         super(event.isAsynchronous());
         this.event = event;
 
         this.playerChatFormat = chatFormat;
+        this.recipients = recipients;
     }
 
     @Override
