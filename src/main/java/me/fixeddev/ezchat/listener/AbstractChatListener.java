@@ -37,12 +37,13 @@ public abstract class AbstractChatListener implements Listener {
 
         if (alternativeChatHandling) {
             event.setCancelled(true);
+
+            Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
         } else {
             recipients = new HashSet<>(event.getRecipients());
             event.getRecipients().clear();
         }
 
-        Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
         ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
