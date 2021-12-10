@@ -3,9 +3,11 @@ package me.fixeddev.ezchat.dependency;
 import com.google.common.io.Files;
 import team.unnamed.dependency.Dependency;
 import team.unnamed.dependency.DependencyHandler;
+import team.unnamed.dependency.DependencyHandlerBuilder;
 import team.unnamed.dependency.MavenDependency;
 import team.unnamed.dependency.exception.ErrorDetails;
 import team.unnamed.dependency.load.JarLoader;
+import team.unnamed.dependency.load.JarLoaderJdk8;
 import team.unnamed.dependency.logging.LogStrategy;
 
 import java.io.File;
@@ -28,10 +30,10 @@ public class DependencyDownloader {
     private final List<Relocation> relocationList;
 
     private final File dependencyFolder;
-    private final ClassLoader classLoader;
+    private final URLClassLoader classLoader;
     private final Logger logger;
 
-    public DependencyDownloader(ClassLoader classLoader, File dependencyFolder, Logger logger) {
+    public DependencyDownloader(URLClassLoader classLoader, File dependencyFolder, Logger logger) {
         this.logger = logger;
         this.classLoader = classLoader;
         this.dependencyFolder = dependencyFolder;
@@ -52,13 +54,14 @@ public class DependencyDownloader {
             logger.log(Level.SEVERE, "Failed to read dependency version", e);
         }
 
-        handler = DependencyHandler
+        DependencyHandlerBuilder builder = DependencyHandler
                 .builder()
                 .setClassLoader(classLoader)
                 .setDependenciesFolder(dependencyFolder)
                 .setLogStrategy(LogStrategy.getSilent())
-                .setDeleteOnNonEqual(false)
-                .build();
+                .setDeleteOnNonEqual(false);
+
+        handler = builder.build();
 
         dependencies = new HashSet<>();
         relocationList = new ArrayList<>();
@@ -113,7 +116,9 @@ public class DependencyDownloader {
         RelocationApplier applier = new RelocationApplier();
         applier.setRelocationList(relocationList);
 
-        JarLoader loader = new JarLoader((URLClassLoader) classLoader);
+        JarLoader loader = new JarLoaderJdk8(classLoader);
+
+
         ErrorDetails details = new ErrorDetails("relocate and load");
 
         List<Dependency> dependenciesToDownload = new ArrayList<>();

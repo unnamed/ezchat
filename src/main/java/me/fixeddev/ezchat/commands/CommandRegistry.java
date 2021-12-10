@@ -6,7 +6,6 @@ import me.fixeddev.commandflow.annotated.part.PartInjector;
 import me.fixeddev.commandflow.annotated.part.defaults.DefaultsModule;
 import me.fixeddev.commandflow.bukkit.BukkitCommandManager;
 import me.fixeddev.commandflow.bukkit.factory.BukkitModule;
-import me.fixeddev.commandflow.command.Command;
 import me.fixeddev.ezchat.ChatPlugin;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 
