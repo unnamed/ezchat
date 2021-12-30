@@ -40,7 +40,7 @@ public class ChatPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         // we know for sure that at least the java plugin classloader is an url class loader
-        downloader = new DependencyDownloader((URLClassLoader) this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
+        //downloader = new DependencyDownloader((URLClassLoader) this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
     }
 
     @Override
