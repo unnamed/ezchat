@@ -37,8 +37,6 @@ public abstract class AbstractChatListener implements Listener {
 
         if (alternativeChatHandling) {
             event.setCancelled(true);
-
-            Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
         } else {
             recipients = new HashSet<>(event.getRecipients());
             event.getRecipients().clear();
@@ -62,6 +60,8 @@ public abstract class AbstractChatListener implements Listener {
         if (chatEvent.isCancelled()) {
             return;
         }
+
+        Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
         EasyTextComponent chatFormatComponent = null;
 
