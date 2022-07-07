@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class LowestChatListener extends AbstractChatListener implements Listener {
+public class LowestChatListener extends AbstractChatListener {
 
     public LowestChatListener(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
         super(chatFormatManager, alternativeChatHandling);
