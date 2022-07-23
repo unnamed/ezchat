@@ -45,7 +45,7 @@ public abstract class AbstractChatListener implements Listener {
 
         ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
-        String message = ChatFormatSerializer.color(chatFormat.getChatColor()) + event.getMessage();
+        String message = ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + event.getMessage();
 
         if (player.hasPermission("ezchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
