@@ -37,8 +37,6 @@ public abstract class AbstractChatListener implements Listener {
 
         if (alternativeChatHandling) {
             event.setCancelled(true);
-
-            Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
         } else {
             recipients = new HashSet<>(event.getRecipients());
             event.getRecipients().clear();
@@ -47,7 +45,7 @@ public abstract class AbstractChatListener implements Listener {
 
         ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
-        String message = ChatFormatSerializer.color(chatFormat.getChatColor()) + event.getMessage();
+        String message = ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + event.getMessage();
 
         if (player.hasPermission("ezchat.color")) {
             message = ChatColor.translateAlternateColorCodes('&', message);
@@ -62,6 +60,8 @@ public abstract class AbstractChatListener implements Listener {
         if (chatEvent.isCancelled()) {
             return;
         }
+
+        Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
         EasyTextComponent chatFormatComponent = null;
 

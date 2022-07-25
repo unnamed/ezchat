@@ -99,7 +99,7 @@ public class ChatFormatSerializer {
         return prefix.append(playerName).append(suffix);
     }
 
-    private String replacePlaceholders(Player player, String message) {
+    public static String replacePlaceholders(Player player, String message) {
         return PlaceholderReplacer.getInstance().replacePlaceholders(player, color(message));
     }
 
