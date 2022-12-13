@@ -1,18 +1,19 @@
 package me.fixeddev.ezchat.listener;
 
-import me.fixeddev.ezchat.EasyTextComponent;
+import me.fixeddev.ezchat.ChatPlugin;
 import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,11 +25,17 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
     private final boolean alternativeChatHandling;
 
+    private BukkitAudiences bukkitAudiences;
+    private final LegacyComponentSerializer componentSerializer;
+
     public OldChatFormatHandler(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
         this.chatFormatManager = chatFormatManager;
 
         this.chatFormatSerializer = new ChatFormatSerializer();
         this.alternativeChatHandling = alternativeChatHandling;
+
+        bukkitAudiences = BukkitAudiences.create(JavaPlugin.getPlugin(ChatPlugin.class));
+        componentSerializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().extractUrls().build();
     }
 
     @Override
@@ -52,7 +59,7 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        BaseComponent[] messageComponent = TextComponent.fromLegacyText(message);
+        Component messageComponent = componentSerializer.deserialize(message);
 
         AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 
@@ -64,22 +71,19 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
         Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
-        EasyTextComponent chatFormatComponent = null;
+        Component chatFormatComponent = null;
 
         if (!chatFormat.isUsePlaceholderApi()) {
-            chatFormatComponent = new EasyTextComponent().append(ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(chatFormatSerializer.constructJsonMessage(chatFormat, player))));
-            chatFormatComponent.append(messageComponent);
+            chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player).append(messageComponent);
         }
 
         for (Player recipient : recipients) {
+            Audience recipientAudience = bukkitAudiences.player(recipient);
             if (chatFormat.isUsePlaceholderApi()) {
-                chatFormatComponent = new EasyTextComponent().append(ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(chatFormatSerializer.constructJsonMessage(chatFormat, player))));
-
-                chatFormatComponent.append(messageComponent);
+                chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipientAudience).append(messageComponent);
             }
 
-
-            recipient.spigot().sendMessage(chatFormatComponent.build());
+            recipientAudience.sendMessage(chatFormatComponent);
         }
     }
 }

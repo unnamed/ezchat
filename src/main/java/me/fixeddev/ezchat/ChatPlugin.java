@@ -1,13 +1,10 @@
 package me.fixeddev.ezchat;
 
-import java.io.File;
-import java.net.URLClassLoader;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.fixeddev.ezchat.commands.CommandRegistry;
-import me.fixeddev.ezchat.dependency.DependencyDownloader;
 import me.fixeddev.ezchat.format.BaseChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.listener.ChatFormatHandler;
@@ -16,8 +13,10 @@ import me.fixeddev.ezchat.listener.OldChatFormatHandler;
 import me.fixeddev.ezchat.uuid.BasicUUIDCache;
 import me.fixeddev.ezchat.uuid.DelegateUUIDCache;
 import me.fixeddev.ezchat.uuid.UUIDCache;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -83,11 +82,11 @@ public class ChatPlugin extends JavaPlugin {
         boolean alternativeHandling = config.getBoolean("alternative-handling", false);
         EventPriority eventPriority = EventPriority.valueOf(config.getString("chat-event-priority", "NORMAL"));
 
-        getLogger().log(Level.INFO, "Registering chat listener for priority " + eventPriority.toString());
+        getLogger().log(Level.INFO, "Registering chat listener for priority " + eventPriority);
         ChatFormatHandler chatFormatHandler = new OldChatFormatHandler(chatFormatManager, alternativeHandling);
         Class<? extends PlayerEvent> eventClazz = AsyncPlayerChatEvent.class;
 
-        if (hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration")) {
+        if (hasClass("io.papermc.paper.event.player.AsyncChatEvent") && paperHasAdventure()) {
             chatFormatHandler = new NewChatFormatHandler(chatFormatManager);
             eventClazz = AsyncChatEvent.class;
 
@@ -109,6 +108,16 @@ public class ChatPlugin extends JavaPlugin {
             Class.forName(className);
             return true;
         } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static boolean paperHasAdventure(){
+        try {
+            Player.class.getDeclaredMethod("displayName", Component.class);
+
+            return true;
+        } catch (NoSuchMethodException e) {
             return false;
         }
     }

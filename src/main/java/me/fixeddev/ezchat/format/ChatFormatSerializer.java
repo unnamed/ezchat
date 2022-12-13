@@ -31,6 +31,8 @@ public class ChatFormatSerializer {
     private final static String EZ_HEX_COLOR_REPLACEMENT = "&[$1,$2,$3]";
     private final LegacyComponentSerializer componentSerializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().extractUrls().build();
 
+    private boolean paper = true;
+
     public Component constructJsonMessage(ChatFormat chatFormat, Player player) {
         Component prefix = fromString(color(chatFormat.getPrefix()));
 
@@ -41,10 +43,7 @@ public class ChatFormatSerializer {
         prefix = setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
 
         Component playerName = fromString(color(chatFormat.getPlayerName().replace("{name}", player.getName())));
-        playerName = playerName
-                .replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}")
-                        .replacement(player.displayName())
-                        .build());
+        playerName = playerName.replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}").replacement(displayName(player)).build());
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
             playerName = createHover(chatFormat.getPlayerNameTooltip(), playerName, s -> fromString(replacePlaceholders(player, s)));
@@ -72,7 +71,7 @@ public class ChatFormatSerializer {
         prefix = setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(chatFormat.getPrefixClickActionContent(), player, viewer));
 
         Component playerName = fromString(color(chatFormat.getPlayerName().replace("{name}", player.getName())));
-        playerName = playerName.replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}").replacement(player.displayName()).build());
+        playerName = playerName.replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}").replacement(displayName(player)).build());
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
             playerName = createHover(chatFormat.getPlayerNameTooltip(), playerName, s -> fromString(replacePlaceholders(s, player, viewer)));
@@ -142,5 +141,17 @@ public class ChatFormatSerializer {
 
     private Component fromString(String text) {
         return componentSerializer.deserialize(text);
+    }
+
+    private Component displayName(Player player) {
+        if (paper) {
+            try {
+                return player.displayName();
+            } catch (NoSuchMethodError ignored) {
+                paper = false;
+            }
+        }
+
+        return fromString(player.getDisplayName());
     }
 }
