@@ -1,12 +1,18 @@
 package me.fixeddev.ezchat.format;
 
-import me.fixeddev.ezchat.EasyTextComponent;
-import me.fixeddev.ezchat.ReplacingEasyTextComponent;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class ChatFormatSerializer {
@@ -23,79 +29,64 @@ public class ChatFormatSerializer {
             ChatColor.COLOR_CHAR + "$5" +
             ChatColor.COLOR_CHAR + "$6";
     private final static String EZ_HEX_COLOR_REPLACEMENT = "&[$1,$2,$3]";
+    private final LegacyComponentSerializer componentSerializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().extractUrls().build();
 
-    public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player) {
-        EasyTextComponent prefix = new EasyTextComponent();
-        prefix.append(color(chatFormat.getPrefix()));
+    public Component constructJsonMessage(ChatFormat chatFormat, Player player) {
+        Component prefix = fromString(color(chatFormat.getPrefix()));
 
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
-            EasyTextComponent hoverComponent = new EasyTextComponent();
-
-            createHover(chatFormat.getPrefixTooltip(), prefix, hoverComponent);
+            prefix = createHover(chatFormat.getPrefixTooltip(), prefix, s -> fromString(replacePlaceholders(player, s)));
         }
 
-        setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
+        prefix = setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
 
-        EasyTextComponent playerName = new EasyTextComponent();
-        playerName.append(color(chatFormat.getPlayerName()
-                .replace("{displayName}", player.getDisplayName()
-                        .replace("{name}", player.getName()))));
+        Component playerName = fromString(color(chatFormat.getPlayerName().replace("{name}", player.getName())));
+        playerName = playerName
+                .replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}")
+                        .replacement(player.displayName())
+                        .build());
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
-            EasyTextComponent hoverComponent = new EasyTextComponent();
-
-            createHover(chatFormat.getPlayerNameTooltip(), playerName, hoverComponent);
+            playerName = createHover(chatFormat.getPlayerNameTooltip(), playerName, s -> fromString(replacePlaceholders(player, s)));
         }
 
-        setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
+        playerName = setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
 
-        EasyTextComponent suffix = new EasyTextComponent();
-        suffix.append(color(chatFormat.getSuffix()));
+        Component suffix = fromString(color(chatFormat.getSuffix()));
 
         if (!chatFormat.getSuffixTooltip().isEmpty()) {
-            EasyTextComponent hoverComponent = new EasyTextComponent();
-
-            createHover(chatFormat.getSuffixTooltip(), suffix, hoverComponent);
+            suffix = createHover(chatFormat.getSuffixTooltip(), suffix, s -> fromString(replacePlaceholders(player, s)));
         }
 
-        setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
+        suffix = setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
 
         return prefix.append(playerName).append(suffix);
     }
 
-    public EasyTextComponent constructJsonMessage(ChatFormat chatFormat, Player player, Player playerTwo) {
-        ReplacingEasyTextComponent prefix = new ReplacingEasyTextComponent(player, playerTwo);
-        prefix.append(color(chatFormat.getPrefix()));
-
+    public Component constructJsonMessage(ChatFormat chatFormat, Player player, Audience viewer) {
+        Component prefix = fromString(color(chatFormat.getPrefix()));
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
-
-            createHover(chatFormat.getPrefixTooltip(), prefix, hoverComponent);
+            prefix = createHover(chatFormat.getPrefixTooltip(), prefix, s -> fromString(replacePlaceholders(s, player, viewer)));
         }
 
-        setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(player, chatFormat.getPrefixClickActionContent()));
+        prefix = setClickAction(chatFormat.getPrefixClickAction(), prefix, replacePlaceholders(chatFormat.getPrefixClickActionContent(), player, viewer));
 
-        ReplacingEasyTextComponent playerName = new ReplacingEasyTextComponent(player, playerTwo);
-        playerName.append(color(chatFormat.getPlayerName()));
+        Component playerName = fromString(color(chatFormat.getPlayerName().replace("{name}", player.getName())));
+        playerName = playerName.replaceText(TextReplacementConfig.builder().matchLiteral("{displayName}").replacement(player.displayName()).build());
 
         if (!chatFormat.getPlayerNameTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
-
-            createHover(chatFormat.getPlayerNameTooltip(), playerName, hoverComponent);
+            playerName = createHover(chatFormat.getPlayerNameTooltip(), playerName, s -> fromString(replacePlaceholders(s, player, viewer)));
         }
 
-        setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(player, chatFormat.getPlayerNameClickActionContent()));
+        playerName = setClickAction(chatFormat.getPlayerNameClickAction(), playerName, replacePlaceholders(chatFormat.getPrefixClickActionContent(), player, viewer));
 
-        ReplacingEasyTextComponent suffix = new ReplacingEasyTextComponent(player, playerTwo);
-        suffix.append(color(chatFormat.getSuffix()));
+        Component suffix = fromString(color(chatFormat.getSuffix()));
 
         if (!chatFormat.getSuffixTooltip().isEmpty()) {
-            ReplacingEasyTextComponent hoverComponent = new ReplacingEasyTextComponent(player, playerTwo);
-
-            createHover(chatFormat.getSuffixTooltip(), suffix, hoverComponent);
+            suffix = createHover(chatFormat.getSuffixTooltip(), suffix, s -> fromString(replacePlaceholders(s, player, viewer)));
         }
 
-        setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
+        suffix = setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(chatFormat.getPrefixClickActionContent(), player, viewer));
         return prefix.append(playerName).append(suffix);
     }
 
@@ -111,35 +102,45 @@ public class ChatFormatSerializer {
         return ChatColor.translateAlternateColorCodes('&', newMessage);
     }
 
-    private void setClickAction(ClickAction action, EasyTextComponent textComponent, String content) {
+    private Component setClickAction(ClickAction action, Component textComponent, String content) {
         switch (action) {
             case OPEN_URL:
-                textComponent.setClickOpenUrl(content);
+                textComponent = textComponent.clickEvent(ClickEvent.openUrl(content));
                 break;
             case EXECUTE_COMMAND:
-                textComponent.setClickRunCommand(content);
+                textComponent = textComponent.clickEvent(ClickEvent.runCommand(content));
                 break;
             case SUGGEST_COMMAND:
-                textComponent.setClickSuggestCommand(content);
+                textComponent = textComponent.clickEvent(ClickEvent.suggestCommand(content));
                 break;
             default:
             case NONE:
                 break;
         }
+
+        return textComponent;
     }
 
-    private void createHover(List<String> hover, EasyTextComponent component, EasyTextComponent hoverComponent) {
+    private Component createHover(List<String> hover, Component component, Function<String, Component> converterFunction) {
+        TextComponent hoverComponent = Component.empty();
         for (int i = 0; i < hover.size(); i++) {
             String line = color(hover.get(i));
 
             if (i >= hover.size() - 1) {
-                hoverComponent.append(line);
+                hoverComponent = hoverComponent.append(converterFunction.apply(line));
             } else {
-                hoverComponent.appendWithNewLine(line);
+                hoverComponent = hoverComponent.append(converterFunction.apply(line)).append(Component.text('\n'));
             }
         }
 
-        component.setHoverShowText(hoverComponent);
+        return component.hoverEvent(HoverEvent.showText(hoverComponent));
     }
 
+    private String replacePlaceholders(String message, Player source, Audience viewer) {
+        return PlaceholderReplacer.getInstance().replaceRelational(source, viewer, message);
+    }
+
+    private Component fromString(String text) {
+        return componentSerializer.deserialize(text);
+    }
 }

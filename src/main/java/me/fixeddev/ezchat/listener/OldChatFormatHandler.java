@@ -5,32 +5,34 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractChatListener implements Listener {
+public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEvent> {
 
     private final ChatFormatManager chatFormatManager;
     private final ChatFormatSerializer chatFormatSerializer;
 
     private final boolean alternativeChatHandling;
 
-    public AbstractChatListener(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
+    public OldChatFormatHandler(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
         this.chatFormatManager = chatFormatManager;
 
         this.chatFormatSerializer = new ChatFormatSerializer();
         this.alternativeChatHandling = alternativeChatHandling;
     }
 
-    public void formatChat(AsyncPlayerChatEvent event) {
+    @Override
+    public void accept(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
         Set<Player> recipients = event.getRecipients();
@@ -42,7 +44,6 @@ public abstract class AbstractChatListener implements Listener {
             event.getRecipients().clear();
         }
 
-
         ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
         String message = ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + event.getMessage();
@@ -53,7 +54,7 @@ public abstract class AbstractChatListener implements Listener {
 
         BaseComponent[] messageComponent = TextComponent.fromLegacyText(message);
 
-        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, recipients);
+        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
 
         Bukkit.getPluginManager().callEvent(chatEvent);
 
@@ -66,13 +67,13 @@ public abstract class AbstractChatListener implements Listener {
         EasyTextComponent chatFormatComponent = null;
 
         if (!chatFormat.isUsePlaceholderApi()) {
-            chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player);
+            chatFormatComponent = new EasyTextComponent().append(ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(chatFormatSerializer.constructJsonMessage(chatFormat, player))));
             chatFormatComponent.append(messageComponent);
         }
 
         for (Player recipient : recipients) {
             if (chatFormat.isUsePlaceholderApi()) {
-                chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipient);
+                chatFormatComponent = new EasyTextComponent().append(ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(chatFormatSerializer.constructJsonMessage(chatFormat, player))));
 
                 chatFormatComponent.append(messageComponent);
             }

@@ -6,25 +6,22 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerEvent;
 
 import java.util.Set;
 
 public class AsyncEzChatEvent extends Event implements Cancellable {
-    private final AsyncPlayerChatEvent event;
+    private final PlayerEvent event;
     private final ChatFormat playerChatFormat;
-
-    private Set<Player> recipients;
 
     private boolean cancelled;
     private static final HandlerList handlerList = new HandlerList();
 
-
-    public AsyncEzChatEvent(AsyncPlayerChatEvent event, ChatFormat chatFormat, Set<Player> recipients) {
+    public AsyncEzChatEvent(PlayerEvent event, ChatFormat chatFormat) {
         super(event.isAsynchronous());
         this.event = event;
 
         this.playerChatFormat = chatFormat;
-        this.recipients = recipients;
     }
 
     @Override
@@ -41,20 +38,8 @@ public class AsyncEzChatEvent extends Event implements Cancellable {
         return playerChatFormat;
     }
 
-    public AsyncPlayerChatEvent getEvent() {
+    public PlayerEvent getEvent() {
         return event;
-    }
-
-    public String getMessage() {
-        return event.getMessage();
-    }
-
-    public void setMessage(String message) {
-        event.setMessage(message);
-    }
-
-    public Set<Player> getRecipients() {
-        return event.getRecipients();
     }
 
     public Player getPlayer() {

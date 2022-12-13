@@ -1,5 +1,7 @@
 package me.fixeddev.ezchat.replacer;
 
+import me.fixeddev.ezchat.format.ChatFormatSerializer;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -9,11 +11,11 @@ public class DummyReplacer extends PlaceholderReplacer {
         toReplace = toReplace.replace("{name}", player.getName());
         toReplace = toReplace.replace("{displayName}", player.getDisplayName());
 
-        return ChatColor.translateAlternateColorCodes('&',toReplace);
+        return ChatFormatSerializer.color(toReplace);
     }
 
     @Override
-    public String replaceRelational(Player player, Player playerTwo, String toReplace) {
-        return ChatColor.translateAlternateColorCodes('&', toReplace);
+    public String replaceRelational(Player player, Audience viewer, String toReplace) {
+        return ChatFormatSerializer.color(toReplace);
     }
 }

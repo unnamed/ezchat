@@ -5,29 +5,27 @@ import java.net.URLClassLoader;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import me.fixeddev.ezchat.commands.CommandRegistry;
 import me.fixeddev.ezchat.dependency.DependencyDownloader;
 import me.fixeddev.ezchat.format.BaseChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatManager;
-import me.fixeddev.ezchat.listener.AbstractChatListener;
-import me.fixeddev.ezchat.listener.HighChatListener;
-import me.fixeddev.ezchat.listener.HighestChatListener;
-import me.fixeddev.ezchat.listener.LowChatListener;
-import me.fixeddev.ezchat.listener.LowestChatListener;
-import me.fixeddev.ezchat.listener.MonitorChatListener;
-import me.fixeddev.ezchat.listener.NormalChatListener;
+import me.fixeddev.ezchat.listener.ChatFormatHandler;
+import me.fixeddev.ezchat.listener.NewChatFormatHandler;
+import me.fixeddev.ezchat.listener.OldChatFormatHandler;
 import me.fixeddev.ezchat.uuid.BasicUUIDCache;
 import me.fixeddev.ezchat.uuid.DelegateUUIDCache;
 import me.fixeddev.ezchat.uuid.UUIDCache;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ChatPlugin extends JavaPlugin {
-
-    private DependencyDownloader downloader;
 
     private ChatFormatManager chatFormatManager;
 
@@ -38,35 +36,19 @@ public class ChatPlugin extends JavaPlugin {
     private Runnable unregisterCommands;
 
     @Override
-    public void onLoad() {
-        // we know for sure that at least the java plugin classloader is an url class loader
-        //downloader = new DependencyDownloader((URLClassLoader) this.getClassLoader(), new File(getDataFolder(), "dependencies"), getLogger());
-    }
-
-    @Override
     public void onDisable() {
         unregisterCommands.run();
     }
 
     @Override
     public void onEnable() {
-        //downloader.downloadDependencies(); never start it
-
         saveDefaultConfig();
 
         chatFormatManager = new BaseChatFormatManager(this);
         Bukkit.getServicesManager().register(ChatFormatManager.class, chatFormatManager, this, ServicePriority.Normal);
 
-        AbstractChatListener chatListener = getChatListener();
-        if (chatListener != null) {
-            getServer().getPluginManager().registerEvents(chatListener, this);
-        }
-
+        registerChatListener();
         registerCommands();
-    }
-
-    public DependencyDownloader getDownloader() {
-        return downloader;
     }
 
     public UUIDCache getUuidCache() {
@@ -96,31 +78,39 @@ public class ChatPlugin extends JavaPlugin {
         unregisterCommands = registry::unregisterCommands;
     }
 
-    private AbstractChatListener getChatListener() {
+    private void registerChatListener() {
         FileConfiguration config = getConfig();
         boolean alternativeHandling = config.getBoolean("alternative-handling", false);
         EventPriority eventPriority = EventPriority.valueOf(config.getString("chat-event-priority", "NORMAL"));
 
-        switch (eventPriority) {
-            case LOWEST:
-                return new LowestChatListener(chatFormatManager, alternativeHandling);
-            case LOW:
-                return new LowChatListener(chatFormatManager, alternativeHandling);
-            case NORMAL:
-                return new NormalChatListener(chatFormatManager, alternativeHandling);
-            case HIGH:
-                return new HighChatListener(chatFormatManager, alternativeHandling);
-            case HIGHEST:
-                return new HighestChatListener(chatFormatManager, alternativeHandling);
-            case MONITOR:
-                return new MonitorChatListener(chatFormatManager, alternativeHandling);
-            default:
-                getLogger().log(Level.SEVERE, "Unknown priority {0}, disabling plugin.", eventPriority);
-                this.setEnabled(false);
-                break;
+        getLogger().log(Level.INFO, "Registering chat listener for priority " + eventPriority.toString());
+        ChatFormatHandler chatFormatHandler = new OldChatFormatHandler(chatFormatManager, alternativeHandling);
+        Class<? extends PlayerEvent> eventClazz = AsyncPlayerChatEvent.class;
+
+        if (hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration")) {
+            chatFormatHandler = new NewChatFormatHandler(chatFormatManager);
+            eventClazz = AsyncChatEvent.class;
+
+            getLogger().log(Level.INFO, "Paper was detected, using Paper's chat event.");
+        } else {
+            getLogger().log(Level.INFO, "Paper couldn't detected, using legacy chat event.");
         }
 
-        return null;
+        ChatFormatHandler finalChatFormatHandler = chatFormatHandler;
+
+        getServer().getPluginManager().registerEvent(eventClazz, new Listener() {
+        }, eventPriority, (listener, event) -> {
+            finalChatFormatHandler.accept((PlayerEvent) event);
+        }, this, true);
+    }
+
+    private static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static UUIDCache registerCache() {
