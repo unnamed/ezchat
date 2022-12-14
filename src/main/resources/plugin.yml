@@ -9,4 +9,3 @@ libraries:
   - "net.kyori:adventure-api:4.8.1"
   - "net.kyori:adventure-text-serializer-gson:4.8.1"
   - "net.kyori:adventure-text-serializer-legacy:4.8.1"
-  - "net.kyori:adventure-platform-bukkit:4.2.0"

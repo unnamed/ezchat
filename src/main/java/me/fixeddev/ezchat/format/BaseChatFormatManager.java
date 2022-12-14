@@ -1,5 +1,6 @@
 package me.fixeddev.ezchat.format;
 
+import me.fixeddev.ezchat.format.part.EasyChatPart;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -17,21 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BaseChatFormatManager implements ChatFormatManager {
 
-    private Map<String, ChatFormat> formatsByName;
-
-    private ChatFormat defaultFormat;
-
+    private Map<String, NewChatFormat> formatsByName;
+    private NewChatFormat defaultFormat;
     private PriorityOrder defaultPriorityOrder;
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
-    private File configFile;
+    private final File configFile;
     private YamlConfiguration chatConfig;
 
     public BaseChatFormatManager(JavaPlugin plugin) {
@@ -39,6 +39,9 @@ public class BaseChatFormatManager implements ChatFormatManager {
 
         ConfigurationSerialization.registerClass(ChatFormat.class);
         ConfigurationSerialization.registerClass(BaseChatFormat.class);
+
+        ConfigurationSerialization.registerClass(EasyChatPart.class);
+        ConfigurationSerialization.registerClass(NewChatFormat.class);
 
         configFile = new File(plugin.getDataFolder(), "formats.yml");
         if (!configFile.exists()) {
@@ -84,20 +87,20 @@ public class BaseChatFormatManager implements ChatFormatManager {
     }
 
     @Override
-    public ChatFormat getChatFormatForPlayer(Player player) {
+    public NewChatFormat getChatFormatForPlayer(Player player) {
         return getChatFormatForPlayer(player, defaultPriorityOrder);
     }
 
     @Override
-    public ChatFormat getChatFormatForPlayer(Player player, PriorityOrder priorityOrder) {
-        Stream<ChatFormat> chatFormatStream = formatsByName.values().stream()
+    public NewChatFormat getChatFormatForPlayer(Player player, PriorityOrder priorityOrder) {
+        Stream<NewChatFormat> chatFormatStream = formatsByName.values().stream()
                 .filter(format -> format != null && player.hasPermission(format.getPermission()));
 
-        List<ChatFormat> sortedChatFormats;
+        List<NewChatFormat> sortedChatFormats;
 
         switch (priorityOrder) {
             case LOWER_FIRST:
-                sortedChatFormats = chatFormatStream.sorted(Comparator.comparingInt(ChatFormat::getPriority)).collect(Collectors.toList());
+                sortedChatFormats = chatFormatStream.sorted(Comparator.comparingInt(NewChatFormat::getPriority)).collect(Collectors.toList());
                 break;
             case HIGHER_FIRST:
                 sortedChatFormats = chatFormatStream.sorted((o1, o2) -> Integer.compare(o2.getPriority(), o1.getPriority())).collect(Collectors.toList());
@@ -106,7 +109,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
                 sortedChatFormats = chatFormatStream.collect(Collectors.toList());
         }
 
-        if(sortedChatFormats.isEmpty()){
+        if (sortedChatFormats.isEmpty()) {
             return defaultFormat;
         }
 
@@ -114,17 +117,17 @@ public class BaseChatFormatManager implements ChatFormatManager {
     }
 
     @Override
-    public ChatFormat getChatFormat(String name) {
+    public NewChatFormat getChatFormat(String name) {
         return null;
     }
 
     @Override
-    public Collection<ChatFormat> getRegisteredChatFormats() {
+    public Collection<NewChatFormat> getRegisteredChatFormats() {
         return formatsByName.values();
     }
 
     @Override
-    public void registerChatFormat(ChatFormat chatFormat) {
+    public void registerChatFormat(NewChatFormat chatFormat) {
         formatsByName.put(chatFormat.getFormatName(), chatFormat);
     }
 
@@ -142,6 +145,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
     }
 
     private void loadConfig() throws IOException {
+        AtomicBoolean detectedOldFormats = new AtomicBoolean(false);
         defaultPriorityOrder = PriorityOrder.valueOf(chatConfig.getString("default-priority-ordering", "LOWER_FIRST"));
 
         List<?> formatsRawList = chatConfig.getList("formats");
@@ -149,16 +153,21 @@ public class BaseChatFormatManager implements ChatFormatManager {
             formatsRawList = new ArrayList<>();
         }
 
-        Map<String, ChatFormat> formatMap = new HashMap<>();
+        Map<String, NewChatFormat> formatMap = new HashMap<>();
 
         formatsRawList.forEach(o -> {
-            if (!(o instanceof ChatFormat)) {
+            NewChatFormat format;
+
+            if (o instanceof ChatFormat) {
+                format = FormatConverter.convertFormat((ChatFormat) o);
+                detectedOldFormats.set(true);
+            } else if (!(o instanceof NewChatFormat)) {
                 return;
+            } else {
+                format = (NewChatFormat) o;
             }
 
-            ChatFormat format = (ChatFormat) o;
-
-            if (format.isUsePlaceholderApi() && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            if (format.usingPlaceholderApi() && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
                 plugin.getLogger().log(Level.WARNING, "The format with name {0} has PlaceholderAPI enabled but PlaceholderAPI isn't installed, the placeholders will not work correctly.", format.getFormatName());
             }
 
@@ -169,10 +178,20 @@ public class BaseChatFormatManager implements ChatFormatManager {
 
         defaultFormat = formatMap.get("default");
 
+        if (detectedOldFormats.get()) {
+            plugin.getLogger().log(Level.WARNING, "Some chat formats with the old configuration structure were found and were converted");
+
+            Files.copy(configFile.toPath(), new File(plugin.getDataFolder(),"formats.yml.bak").toPath());
+
+            if (defaultFormat != null) {
+                save();
+            }
+        }
+
         if (defaultFormat == null) {
             plugin.getLogger().log(Level.INFO, "Default chat format doesn't exists, creating it.");
 
-            ChatFormat format = new BaseChatFormat("default", 999999);
+            NewChatFormat format = new NewChatFormat("default");
             defaultFormat = format;
 
             formatsByName.put("default", format);

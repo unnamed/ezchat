@@ -7,15 +7,15 @@ import java.util.Collection;
 
 public interface ChatFormatManager {
 
-    ChatFormat getChatFormatForPlayer(Player player);
+    NewChatFormat getChatFormatForPlayer(Player player);
 
-    ChatFormat getChatFormatForPlayer(Player player, PriorityOrder priorityOrder);
+    NewChatFormat getChatFormatForPlayer(Player player, PriorityOrder priorityOrder);
 
-    ChatFormat getChatFormat(String name);
+    NewChatFormat getChatFormat(String name);
 
-    Collection<ChatFormat> getRegisteredChatFormats();
+    Collection<NewChatFormat> getRegisteredChatFormats();
 
-    void registerChatFormat(ChatFormat chatFormat);
+    void registerChatFormat(NewChatFormat chatFormat);
 
     void reload() throws IOException;
 

@@ -1,6 +1,9 @@
 package me.fixeddev.ezchat.format;
 
+import me.fixeddev.ezchat.format.part.ChatPart;
+import me.fixeddev.ezchat.format.part.EasyChatPartConverter;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
+import me.fixeddev.ezchat.util.ColorReplacement;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -8,32 +11,28 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class ChatFormatSerializer {
 
-    private final static Pattern HEX_COLOR_PATTERN = Pattern.compile("&\\[([\\dA-Fa-f])([\\dA-Fa-f])," +
-            "([\\dA-Fa-f])([\\dA-Fa-f])," +
-            "([\\dA-Fa-f])([\\dA-Fa-f])]");
-    private final static Pattern SECONDARY_HEX_COLOR_PATTERN = Pattern.compile("&?#([\\dA-Fa-f]{2})([\\dA-Fa-f]{2})([\\dA-Fa-f]{2})");
-    private final static String BUKKIT_HEX_COLOR = ChatColor.COLOR_CHAR + "x" +
-            ChatColor.COLOR_CHAR + "$1" +
-            ChatColor.COLOR_CHAR + "$2" +
-            ChatColor.COLOR_CHAR + "$3" +
-            ChatColor.COLOR_CHAR + "$4" +
-            ChatColor.COLOR_CHAR + "$5" +
-            ChatColor.COLOR_CHAR + "$6";
-    private final static String EZ_HEX_COLOR_REPLACEMENT = "&[$1,$2,$3]";
     private final LegacyComponentSerializer componentSerializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().extractUrls().build();
-
     private boolean paper = true;
 
-    public Component constructJsonMessage(ChatFormat chatFormat, Player player) {
+    private EasyChatPartConverter easyChatPartConverter = new EasyChatPartConverter();
+
+    public Component constructJsonMessage(NewChatFormat chatFormat, Player player) {
+        return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player))
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("{displayName}")
+                        .replacement(displayName(player)).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("{name}")
+                        .replacement(player.getName())
+                        .build());
+        /*
         Component prefix = fromString(color(chatFormat.getPrefix()));
 
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
@@ -59,10 +58,19 @@ public class ChatFormatSerializer {
 
         suffix = setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(player, chatFormat.getSuffixClickActionContent()));
 
-        return prefix.append(playerName).append(suffix);
+        return prefix.append(playerName).append(suffix);*/
     }
 
-    public Component constructJsonMessage(ChatFormat chatFormat, Player player, Audience viewer) {
+    public Component constructJsonMessage(NewChatFormat chatFormat, Player player, Audience viewer) {
+        return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player, viewer))
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("{displayName}")
+                        .replacement(displayName(player)).build())
+                .replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("{name}")
+                        .replacement(player.getName())
+                        .build());
+/*
         Component prefix = fromString(color(chatFormat.getPrefix()));
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
             prefix = createHover(chatFormat.getPrefixTooltip(), prefix, s -> fromString(replacePlaceholders(s, player, viewer)));
@@ -86,7 +94,7 @@ public class ChatFormatSerializer {
         }
 
         suffix = setClickAction(chatFormat.getSuffixClickAction(), suffix, replacePlaceholders(chatFormat.getPrefixClickActionContent(), player, viewer));
-        return prefix.append(playerName).append(suffix);
+        return prefix.append(playerName).append(suffix);*/
     }
 
     public static String replacePlaceholders(Player player, String message) {
@@ -94,11 +102,7 @@ public class ChatFormatSerializer {
     }
 
     public static String color(String message) {
-        String newMessage = SECONDARY_HEX_COLOR_PATTERN.matcher(message).replaceAll(EZ_HEX_COLOR_REPLACEMENT);
-
-        newMessage = HEX_COLOR_PATTERN.matcher(newMessage).replaceAll(BUKKIT_HEX_COLOR);
-
-        return ChatColor.translateAlternateColorCodes('&', newMessage);
+       return ColorReplacement.color(message);
     }
 
     private Component setClickAction(ClickAction action, Component textComponent, String content) {

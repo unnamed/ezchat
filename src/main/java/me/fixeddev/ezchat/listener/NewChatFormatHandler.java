@@ -6,6 +6,7 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
+import me.fixeddev.ezchat.format.NewChatFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
@@ -31,7 +32,7 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
     public void accept(AbstractChatEvent event) {
         Player player = event.getPlayer();
 
-        ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
+        NewChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
         String legacyMessage = componentSerializer.serialize(event.message());
 
@@ -50,7 +51,7 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
             return;
         }
 
-        if (chatFormat.isUsePlaceholderApi()) {
+        if (chatFormat.usingPlaceholderApi()) {
             event.renderer((source, sourceDisplayName, message, viewer) -> {
                 Component completeMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor())).append(message);
 

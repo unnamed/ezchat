@@ -5,6 +5,7 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
+import me.fixeddev.ezchat.format.NewChatFormat;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -25,16 +26,16 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
     private final boolean alternativeChatHandling;
 
-    private BukkitAudiences bukkitAudiences;
+    private final BukkitAudiences bukkitAudiences;
     private final LegacyComponentSerializer componentSerializer;
 
-    public OldChatFormatHandler(ChatFormatManager chatFormatManager, boolean alternativeChatHandling) {
+    public OldChatFormatHandler(ChatFormatManager chatFormatManager, boolean alternativeChatHandling, JavaPlugin plugin) {
         this.chatFormatManager = chatFormatManager;
 
         this.chatFormatSerializer = new ChatFormatSerializer();
         this.alternativeChatHandling = alternativeChatHandling;
 
-        bukkitAudiences = BukkitAudiences.create(JavaPlugin.getPlugin(ChatPlugin.class));
+        bukkitAudiences = BukkitAudiences.create(plugin);
         componentSerializer = LegacyComponentSerializer.builder().hexColors().useUnusualXRepeatedCharacterHexFormat().extractUrls().build();
     }
 
@@ -51,7 +52,7 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
             event.getRecipients().clear();
         }
 
-        ChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
+        NewChatFormat chatFormat = chatFormatManager.getChatFormatForPlayer(player).copy();
 
         String message = ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + event.getMessage();
 
@@ -73,13 +74,13 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
         Component chatFormatComponent = null;
 
-        if (!chatFormat.isUsePlaceholderApi()) {
+        if (!chatFormat.usingPlaceholderApi()) {
             chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player).append(messageComponent);
         }
 
         for (Player recipient : recipients) {
             Audience recipientAudience = bukkitAudiences.player(recipient);
-            if (chatFormat.isUsePlaceholderApi()) {
+            if (chatFormat.usingPlaceholderApi()) {
                 chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipientAudience).append(messageComponent);
             }
 
