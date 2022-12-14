@@ -27,11 +27,7 @@ public class ChatFormatSerializer {
         return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player))
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("{displayName}")
-                        .replacement(displayName(player)).build())
-                .replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("{name}")
-                        .replacement(player.getName())
-                        .build());
+                        .replacement(displayName(player)).build());
         /*
         Component prefix = fromString(color(chatFormat.getPrefix()));
 
@@ -65,11 +61,7 @@ public class ChatFormatSerializer {
         return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player, viewer))
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("{displayName}")
-                        .replacement(displayName(player)).build())
-                .replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("{name}")
-                        .replacement(player.getName())
-                        .build());
+                        .replacement(displayName(player)).build());
 /*
         Component prefix = fromString(color(chatFormat.getPrefix()));
         if (!chatFormat.getPrefixTooltip().isEmpty()) {
