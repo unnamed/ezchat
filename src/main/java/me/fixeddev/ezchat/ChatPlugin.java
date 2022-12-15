@@ -92,7 +92,7 @@ public class ChatPlugin extends JavaPlugin {
 
             getLogger().log(Level.INFO, "Paper was detected, using Paper's chat event.");
         } else {
-            getLogger().log(Level.INFO, "Paper couldn't detected, using legacy chat event.");
+            getLogger().log(Level.INFO, "Unable to detect Paper, using legacy chat event.");
         }
 
         ChatFormatHandler finalChatFormatHandler = chatFormatHandler;
