@@ -8,7 +8,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +39,16 @@ public class NewChatFormat implements ConfigurationSerializable {
 
         chatParts.add(new EasyChatPart("{displayName}", ClickAction.SUGGEST_COMMAND, "/msg {name}", Collections.emptyList()));
         chatParts.add(new EasyChatPart(": ", ClickAction.NONE, "", Collections.emptyList()));
+    }
+
+    public NewChatFormat(Map<String, Object> map) {
+        name = (String) map.get("name");
+        priority = (int) map.get("priority");
+        chatColor = (String) map.getOrDefault("chat-color", "");
+        permission = (String) map.getOrDefault("permission", "");
+        usePlaceholderApi = (boolean) map.getOrDefault("use-placeholder-api", false);
+
+        chatParts = (List<ChatPart<?>>) map.get("parts");
     }
 
     public String getFormatName() {

@@ -2,45 +2,37 @@
 ## HIGHER_FIRST: Selects the format with the highest priority that the user has
 default-priority-ordering: LOWER_FIRST
 formats:
-- ==: me.fixeddev.ezchat.format.BaseChatFormat
-  name: default
-  priority: 999999
-  prefix: ''
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  prefix-click-action: ''
-  prefix-tooltip: []
-  player-name: '{displayName}'
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  player-name-click-action: '[SUGGEST] /msg {name}'
-  player-name-tooltip: []
-  suffix: ": "
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  suffix-click-action: ''
-  suffix-tooltip: []
-  chat-color: '&7'
-  permission: default
-  use-placeholderapi: true
-- ==: me.fixeddev.ezchat.format.BaseChatFormat
-  name: vip
-  priority: 999998
-  prefix: ''
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  prefix-click-action: ''
-  prefix-tooltip: []
-  player-name: '{displayName}'
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  player-name-click-action: '[SUGGEST] /msg {name}'
-  player-name-tooltip: []
-  suffix: ": "
-  ## Supported values:
-  ## EXECUTE, SUGGEST, OPEN
-  suffix-click-action: ''
-  suffix-tooltip: []
-  chat-color: '&f'
-  permission: vip
-  use-placeholderapi: true
+  - ==: new-chat-format
+    name: default
+    priority: 99999
+    chat-color: '&7'
+    permission: ''
+    use-placeholder-api: true
+    parts:
+      - ==: chat-part
+        display: '{displayName}'
+        ## Supported values:
+        ## EXECUTE, SUGGEST, OPEN
+        click-action: '[SUGGEST] /msg {name}'
+        tooltip: []
+      - ==: chat-part
+        display: ': '
+        click-action: '[NONE] '
+        tooltip: []
+  - ==: new-chat-format
+    name: vip
+    priority: 99998
+    chat-color: '&f'
+    permission: 'ezchat.vip'
+    use-placeholder-api: true
+    parts:
+      - ==: chat-part
+        display: '{displayName}'
+        ## Supported values:
+        ## EXECUTE, SUGGEST, OPEN
+        click-action: '[SUGGEST] /msg {name}'
+        tooltip: []
+      - ==: chat-part
+        display: ': '
+        click-action: '[NONE] '
+        tooltip: []
