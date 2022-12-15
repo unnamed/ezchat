@@ -21,7 +21,10 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
 
     @Override
     public Component convert(EasyChatPart part, Player player) {
-        Component partComponent = fromString(color(part.getDisplay()));
+        String display = color(part.getDisplay());
+        display = PlaceholderReplacer.getInstance().replacePlaceholders(player, display);
+
+        Component partComponent = fromString(display);
 
         if (!part.getTooltip().isEmpty()) {
             partComponent = createHover(part.getTooltip(), partComponent, s -> fromString(PlaceholderReplacer.getInstance().replacePlaceholders(player, s)));
@@ -34,7 +37,11 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
 
     @Override
     public Component convert(EasyChatPart part, Player player, Audience viewer) {
-        Component partComponent = fromString(color(part.getDisplay()));
+        String display = color(part.getDisplay());
+        display = PlaceholderReplacer.getInstance().replacePlaceholders(player, display);
+        display = PlaceholderReplacer.getInstance().replaceRelational(player, viewer, display);
+
+        Component partComponent = fromString(display);
         if (!part.getTooltip().isEmpty()) {
             partComponent = createHover(part.getTooltip(), partComponent, s -> {
                 s = PlaceholderReplacer.getInstance().replacePlaceholders(player, s);
@@ -61,14 +68,11 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
     private Component setClickAction(ClickAction action, Component textComponent, String content) {
         switch (action) {
             case OPEN_URL:
-                textComponent = textComponent.clickEvent(ClickEvent.openUrl(content));
-                break;
+                return textComponent.clickEvent(ClickEvent.openUrl(content));
             case EXECUTE_COMMAND:
-                textComponent = textComponent.clickEvent(ClickEvent.runCommand(content));
-                break;
+                return textComponent.clickEvent(ClickEvent.runCommand(content));
             case SUGGEST_COMMAND:
-                textComponent = textComponent.clickEvent(ClickEvent.suggestCommand(content));
-                break;
+                return textComponent.clickEvent(ClickEvent.suggestCommand(content));
             default:
             case NONE:
                 break;

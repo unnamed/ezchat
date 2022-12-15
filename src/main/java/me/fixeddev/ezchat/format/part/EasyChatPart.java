@@ -33,7 +33,7 @@ public class EasyChatPart implements ChatPart<EasyChatPart> {
     @SuppressWarnings("unchecked")
     public EasyChatPart(Map<String, Object> map) {
         display = (String) map.get("display");
-        String clickAction = (String) map.getOrDefault("prefix-click-action", "NONE");
+        String clickAction = (String) map.getOrDefault("click-action", "NONE");
 
         Matcher matcher = ACTION_CONTENT.matcher(clickAction);
 
