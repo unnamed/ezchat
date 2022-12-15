@@ -6,7 +6,7 @@
 
     <groupId>me.fixeddev</groupId>
     <artifactId>EzChat</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 
     <repositories>
         <repository>
