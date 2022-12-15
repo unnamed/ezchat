@@ -12,7 +12,7 @@ public class DelegateUUIDCache implements UUIDCache {
         this.uuidCache = uuidCache;
     }
 
-    public DelegateUUIDCache(UUIDCache cache){
+    public DelegateUUIDCache(UUIDCache cache) {
         this.uuidCache = () -> cache;
     }
 

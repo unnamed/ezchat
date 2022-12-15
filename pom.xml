@@ -79,7 +79,6 @@
                             <pattern>net.kyori.text</pattern>
                             <shadedPattern>me.fixeddev.ezchat.text</shadedPattern>
                         </relocation>
-                        
                     </relocations>
                 </configuration>
             </plugin>

@@ -1,15 +1,11 @@
 package me.fixeddev.ezchat.event;
 
-import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.NewChatFormat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
-
-import java.util.Set;
 
 public class AsyncEzChatEvent extends Event implements Cancellable {
     private final PlayerEvent event;

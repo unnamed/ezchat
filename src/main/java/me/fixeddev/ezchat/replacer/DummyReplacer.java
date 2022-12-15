@@ -2,7 +2,6 @@ package me.fixeddev.ezchat.replacer;
 
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class DummyReplacer extends PlaceholderReplacer {

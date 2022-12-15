@@ -3,7 +3,6 @@ package me.fixeddev.ezchat.listener;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AbstractChatEvent;
 import me.fixeddev.ezchat.event.AsyncEzChatEvent;
-import me.fixeddev.ezchat.format.ChatFormat;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import me.fixeddev.ezchat.format.NewChatFormat;

@@ -181,7 +181,7 @@ public class BaseChatFormatManager implements ChatFormatManager {
         if (detectedOldFormats.get()) {
             plugin.getLogger().log(Level.WARNING, "Some chat formats with the old configuration structure were found and were converted");
 
-            Files.copy(configFile.toPath(), new File(plugin.getDataFolder(),"formats.yml.bak").toPath());
+            Files.copy(configFile.toPath(), new File(plugin.getDataFolder(), "formats.yml.bak").toPath());
 
             if (defaultFormat != null) {
                 save();

@@ -1,8 +1,5 @@
 package me.fixeddev.ezchat;
 
-import java.util.function.Supplier;
-import java.util.logging.Level;
-
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.fixeddev.ezchat.commands.CommandRegistry;
 import me.fixeddev.ezchat.format.BaseChatFormatManager;
@@ -23,6 +20,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public class ChatPlugin extends JavaPlugin {
 
@@ -112,7 +112,7 @@ public class ChatPlugin extends JavaPlugin {
         }
     }
 
-    private static boolean paperHasAdventure(){
+    private static boolean paperHasAdventure() {
         try {
             Player.class.getDeclaredMethod("displayName", Component.class);
 
