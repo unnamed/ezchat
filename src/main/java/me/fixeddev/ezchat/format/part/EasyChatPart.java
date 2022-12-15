@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 public class EasyChatPart implements ChatPart<EasyChatPart> {
 
     private String display;
-    private ClickAction clickAction;
-    private String clickContent;
+    private ClickAction clickAction = ClickAction.NONE;
+    private String clickContent = "";
     private List<String> tooltip;
 
     private static final Pattern ACTION_CONTENT = Pattern.compile("\\[(\\w+)\\] (.+)", Pattern.DOTALL);
