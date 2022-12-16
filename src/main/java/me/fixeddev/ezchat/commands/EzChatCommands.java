@@ -36,7 +36,7 @@ public class EzChatCommands implements CommandClass {
 
             return true;
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "An exception ocurred while reloading the chat formats!", e);
+            plugin.getLogger().log(Level.SEVERE, "An exception occurred while reloading the chat formats!", e);
 
             sender.sendMessage(ChatColor.RED + "Failed to reload the chat formats!");
 
