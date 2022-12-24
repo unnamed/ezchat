@@ -40,15 +40,16 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
         }
 
         Component chatMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + legacyMessage);
-        event.message(chatMessage);
 
-        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
+        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, chatMessage);
 
         Bukkit.getPluginManager().callEvent(chatEvent);
 
         if (chatEvent.isCancelled()) {
             return;
         }
+
+        event.message(chatEvent.getMessage());
 
         if (chatFormat.usingPlaceholderApi()) {
             event.renderer((source, sourceDisplayName, message, viewer) -> {
