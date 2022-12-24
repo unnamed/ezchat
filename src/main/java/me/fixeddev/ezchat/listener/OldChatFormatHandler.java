@@ -60,13 +60,15 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
         Component messageComponent = componentSerializer.deserialize(message);
 
-        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat);
+        AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, messageComponent);
 
         Bukkit.getPluginManager().callEvent(chatEvent);
 
         if (chatEvent.isCancelled()) {
             return;
         }
+
+        messageComponent = chatEvent.getMessage();
 
         Bukkit.getConsoleSender().sendMessage(String.format(event.getFormat(), player.getName(), event.getMessage()));
 
