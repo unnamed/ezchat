@@ -1,24 +1,25 @@
 package me.fixeddev.ezchat.event;
 
 import me.fixeddev.ezchat.format.NewChatFormat;
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
-public class AsyncEzChatEvent extends Event implements Cancellable {
+public class AsyncEzChatEvent extends PlayerEvent implements Cancellable {
     private final PlayerEvent event;
     private final NewChatFormat playerChatFormat;
+    private Component message;
 
     private boolean cancelled;
     private static final HandlerList handlerList = new HandlerList();
 
-    public AsyncEzChatEvent(PlayerEvent event, NewChatFormat chatFormat) {
-        super(event.isAsynchronous());
+    public AsyncEzChatEvent(PlayerEvent event, NewChatFormat chatFormat, Component message) {
+        super(event.getPlayer(), event.isAsynchronous());
         this.event = event;
 
         this.playerChatFormat = chatFormat;
+        this.message = message;
     }
 
     @Override
@@ -35,12 +36,16 @@ public class AsyncEzChatEvent extends Event implements Cancellable {
         return playerChatFormat;
     }
 
-    public PlayerEvent getEvent() {
-        return event;
+    public Component getMessage() {
+        return message;
     }
 
-    public Player getPlayer() {
-        return event.getPlayer();
+    public void setMessage(Component message) {
+        this.message = message;
+    }
+
+    public PlayerEvent getEvent() {
+        return event;
     }
 
     public static HandlerList getHandlerList() {
