@@ -107,7 +107,13 @@ public class NewChatFormat implements ConfigurationSerializable {
     }
 
     public NewChatFormat copy() {
-        return new NewChatFormat(name, priority, chatColor, permission, usePlaceholderApi, chatParts);
+        List<ChatPart<?>> copiedChatParts = new ArrayList<>(chatParts.size());
+
+        for (ChatPart<?> chatPart : chatParts) {
+            copiedChatParts.add(chatPart.copy());
+        }
+
+        return new NewChatFormat(name, priority, chatColor, permission, usePlaceholderApi, copiedChatParts);
     }
 
     @Override
