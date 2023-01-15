@@ -3,6 +3,7 @@ package me.fixeddev.ezchat.format;
 import me.fixeddev.ezchat.format.part.ChatPart;
 import me.fixeddev.ezchat.format.part.EasyChatPart;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -96,14 +97,23 @@ public class NewChatFormat implements ConfigurationSerializable {
     }
 
     public Component asComponent(Function<ChatPart<?>, Component> functionConverter) {
-        Component lastComponent = null;
+        Component finalComponent = Component.empty();
+        Component lastComponent = finalComponent;
         for (ChatPart<?> chatPart : chatParts) {
             Component partComponent = functionConverter.apply(chatPart);
+            partComponent = merge(partComponent, lastComponent);
 
-            lastComponent = lastComponent == null ? partComponent : lastComponent.append(partComponent);
+            finalComponent = finalComponent.append(partComponent);
+            lastComponent = partComponent;
         }
 
-        return lastComponent;
+        return finalComponent;
+    }
+
+    private Component merge(Component current, Component other) {
+        Style style = current.style().merge(other.style(), Style.Merge.Strategy.IF_ABSENT_ON_TARGET, Style.Merge.of(Style.Merge.COLOR, Style.Merge.DECORATIONS, Style.Merge.FONT, Style.Merge.INSERTION));
+
+        return current.style(style);
     }
 
     public NewChatFormat copy() {
