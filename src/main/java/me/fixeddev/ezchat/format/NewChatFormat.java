@@ -111,7 +111,7 @@ public class NewChatFormat implements ConfigurationSerializable {
     }
 
     private Component merge(Component current, Component other) {
-        Style style = current.style().merge(other.style(), Style.Merge.Strategy.IF_ABSENT_ON_TARGET, Style.Merge.of(Style.Merge.COLOR, Style.Merge.DECORATIONS, Style.Merge.FONT, Style.Merge.INSERTION));
+        Style style = current.style().merge(other.style(), Style.Merge.Strategy.IF_ABSENT_ON_TARGET, Style.Merge.merges(Style.Merge.COLOR, Style.Merge.DECORATIONS, Style.Merge.FONT, Style.Merge.INSERTION));
 
         return current.style(style);
     }
