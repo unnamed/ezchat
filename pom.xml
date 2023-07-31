@@ -76,8 +76,12 @@
                             <shadedPattern>me.fixeddev.ezchat.commandflow</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>net.kyori.text</pattern>
-                            <shadedPattern>me.fixeddev.ezchat.text</shadedPattern>
+                            <pattern>net.kyori</pattern>
+                            <shadedPattern>me.fixeddev.ezchat.net.kyori</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google.gson</pattern>
+                            <shadedPattern>me.fixeddev.ezchat.com.google.gson</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
