@@ -130,13 +130,13 @@
         <dependency>
             <groupId>me.fixeddev</groupId>
             <artifactId>commandflow-universal</artifactId>
-            <version>0.5.4</version>
+            <version>0.6.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.fixeddev</groupId>
             <artifactId>commandflow-bukkit</artifactId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
