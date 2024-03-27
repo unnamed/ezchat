@@ -38,7 +38,7 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
 
         legacyMessage = OldChatFormatHandler.chatReplaceColors(player, legacyMessage);
 
-        Component chatMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + legacyMessage);
+        Component chatMessage = componentSerializer.deserialize(legacyMessage);
 
         AsyncEzChatEvent chatEvent = new AsyncEzChatEvent(event, chatFormat, chatMessage);
 
