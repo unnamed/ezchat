@@ -4,6 +4,7 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import me.fixeddev.ezchat.format.NewChatFormat;
+import me.fixeddev.ezchat.util.ColorReplacement;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -13,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,9 +56,7 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
         String message = ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + event.getMessage();
 
-        if (player.hasPermission("ezchat.color")) {
-            message = ChatColor.translateAlternateColorCodes('&', message);
-        }
+        message = chatReplaceColors(player, message);
 
         Component messageComponent = componentSerializer.deserialize(message);
 
@@ -86,5 +86,20 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
 
             recipientAudience.sendMessage(chatFormatComponent);
         }
+    }
+
+    @NotNull
+    static String chatReplaceColors(Player player, String message) {
+        boolean allPermission = player.hasPermission("ezchat.chat.all");
+
+        if (!allPermission && !player.hasPermission("ezchat.chat.color")) {
+            message = ColorReplacement.stripColor(message);
+        }
+
+        if (!allPermission && !player.hasPermission("ezchat.chat.format")) {
+            message = ColorReplacement.stripFormat(message);
+        }
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        return message;
     }
 }

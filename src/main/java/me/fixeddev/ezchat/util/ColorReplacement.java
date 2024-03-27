@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 public class ColorReplacement {
 
+    public static final Pattern STRIP_FORMAT_PATTERN = Pattern.compile( "(?i)&[K-ORX]" );
+    public static final Pattern STRIP_COLOR_PATTERN = Pattern.compile( "(?i)&[0-9A-F]" );
 
     private final static Pattern HEX_COLOR_PATTERN = Pattern.compile("&\\[([\\dA-Fa-f])([\\dA-Fa-f])," +
             "([\\dA-Fa-f])([\\dA-Fa-f])," +
@@ -20,11 +22,29 @@ public class ColorReplacement {
             ChatColor.COLOR_CHAR + "$6";
     private final static String EZ_HEX_COLOR_REPLACEMENT = "&[$1,$2,$3]";
 
-    public static String color(String message) {
+    public static String formatHex(String message) {
         String newMessage = SECONDARY_HEX_COLOR_PATTERN.matcher(message).replaceAll(EZ_HEX_COLOR_REPLACEMENT);
 
-        newMessage = HEX_COLOR_PATTERN.matcher(newMessage).replaceAll(BUKKIT_HEX_COLOR);
+        return HEX_COLOR_PATTERN.matcher(newMessage).replaceAll(BUKKIT_HEX_COLOR);
+    }
 
-        return ChatColor.translateAlternateColorCodes('&', newMessage);
+    public static String color(String message) {
+        return color(message, true);
+    }
+
+    public static String color(String message, boolean hex) {
+        if (hex) {
+            return formatHex(message);
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static String stripFormat(String message) {
+        return STRIP_FORMAT_PATTERN.matcher(message).replaceAll("");
+    }
+
+    public static String stripColor(String message) {
+        return STRIP_COLOR_PATTERN.matcher(message).replaceAll("");
     }
 }

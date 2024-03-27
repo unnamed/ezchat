@@ -6,6 +6,7 @@ import me.fixeddev.ezchat.event.AsyncEzChatEvent;
 import me.fixeddev.ezchat.format.ChatFormatManager;
 import me.fixeddev.ezchat.format.ChatFormatSerializer;
 import me.fixeddev.ezchat.format.NewChatFormat;
+import me.fixeddev.ezchat.util.ColorReplacement;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
@@ -35,9 +36,7 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
 
         String legacyMessage = componentSerializer.serialize(event.message());
 
-        if (player.hasPermission("ezchat.color")) {
-            legacyMessage = ChatColor.translateAlternateColorCodes('&', legacyMessage);
-        }
+        legacyMessage = OldChatFormatHandler.chatReplaceColors(player, legacyMessage);
 
         Component chatMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor()) + legacyMessage);
 
