@@ -34,7 +34,7 @@ public class ColorReplacement {
 
     public static String color(String message, boolean hex) {
         if (hex) {
-            return formatHex(message);
+            message = formatHex(message);
         }
 
         return ChatColor.translateAlternateColorCodes('&', message);
