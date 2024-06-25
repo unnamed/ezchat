@@ -54,13 +54,13 @@ public class NewChatFormatHandler implements ChatFormatHandler<AbstractChatEvent
             event.renderer((source, sourceDisplayName, message, viewer) -> {
                 Component completeMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor())).append(message);
 
-                return chatFormatSerializer.constructJsonMessage(chatFormat, player, viewer).append(completeMessage);
+                return chatFormatSerializer.constructJsonMessage(chatFormat, player, viewer).append(completeMessage).compact();
             });
         } else {
             event.renderer(ChatRenderer.viewerUnaware((source, sourceDisplayName, message) -> {
                 Component completeMessage = componentSerializer.deserialize(ChatFormatSerializer.replacePlaceholders(player, chatFormat.getChatColor())).append(message);
 
-                return chatFormatSerializer.constructJsonMessage(chatFormat, player).append(completeMessage);
+                return chatFormatSerializer.constructJsonMessage(chatFormat, player).append(completeMessage).compact();
             }));
         }
     }

@@ -75,13 +75,13 @@ public class OldChatFormatHandler implements ChatFormatHandler<AsyncPlayerChatEv
         Component chatFormatComponent = null;
 
         if (!chatFormat.usingPlaceholderApi()) {
-            chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player).append(messageComponent);
+            chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player).append(messageComponent).compact();
         }
 
         for (Player recipient : recipients) {
             Audience recipientAudience = bukkitAudiences.player(recipient);
             if (chatFormat.usingPlaceholderApi()) {
-                chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipientAudience).append(messageComponent);
+                chatFormatComponent = chatFormatSerializer.constructJsonMessage(chatFormat, player, recipientAudience).append(messageComponent).compact();
             }
 
             recipientAudience.sendMessage(chatFormatComponent);
