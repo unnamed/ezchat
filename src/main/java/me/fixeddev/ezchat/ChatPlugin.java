@@ -83,8 +83,8 @@ public class ChatPlugin extends JavaPlugin {
         EventPriority eventPriority = EventPriority.valueOf(config.getString("chat-event-priority", "NORMAL"));
 
         getLogger().log(Level.INFO, "Registering chat listener for priority " + eventPriority);
-        ChatFormatHandler chatFormatHandler = new OldChatFormatHandler(chatFormatManager, alternativeHandling, this);
-        Class<? extends PlayerEvent> eventClazz = AsyncPlayerChatEvent.class;
+        ChatFormatHandler chatFormatHandler;
+        Class<? extends PlayerEvent> eventClazz;
 
         if (hasClass("io.papermc.paper.event.player.AbstractChatEvent") && paperHasAdventure()) {
             chatFormatHandler = new NewChatFormatHandler(chatFormatManager);
@@ -92,6 +92,9 @@ public class ChatPlugin extends JavaPlugin {
 
             getLogger().log(Level.INFO, "Paper was detected, using Paper's chat event.");
         } else {
+            chatFormatHandler = new OldChatFormatHandler(chatFormatManager, alternativeHandling, this);
+            eventClazz = AsyncPlayerChatEvent.class;
+
             getLogger().log(Level.INFO, "Unable to detect Paper, using legacy chat event.");
         }
 
