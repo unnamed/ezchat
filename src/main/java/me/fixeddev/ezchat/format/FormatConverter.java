@@ -1,7 +1,7 @@
 package me.fixeddev.ezchat.format;
 
 import me.fixeddev.ezchat.format.part.ChatPart;
-import me.fixeddev.ezchat.format.part.EasyChatPart;
+import me.fixeddev.ezchat.format.part.easy.EasyChatPart;
 
 import java.util.ArrayList;
 import java.util.List;

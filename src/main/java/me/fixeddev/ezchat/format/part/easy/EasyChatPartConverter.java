@@ -1,6 +1,7 @@
-package me.fixeddev.ezchat.format.part;
+package me.fixeddev.ezchat.format.part.easy;
 
 import me.fixeddev.ezchat.format.ClickAction;
+import me.fixeddev.ezchat.format.part.PartConverter;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -21,7 +22,7 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
 
     @Override
     public Component convert(EasyChatPart part, Player player) {
-        String display = color(part.getDisplay());
+        String display = part.getDisplay();
         display = PlaceholderReplacer.getInstance().replacePlaceholders(player, display);
 
         Component partComponent = fromString(display);
@@ -54,7 +55,7 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
         String clickContent = PlaceholderReplacer.getInstance().replacePlaceholders(player, part.getClickContent());
         clickContent = PlaceholderReplacer.getInstance().replaceRelational(player, viewer, clickContent);
 
-        partComponent = setClickAction(part.getClickAction(), partComponent, clickContent);
+        partComponent = setClickAction(part.getClickAction(), partComponent, color(clickContent));
 
         return partComponent;
     }
@@ -97,7 +98,7 @@ public class EasyChatPartConverter implements PartConverter<EasyChatPart> {
     }
 
     private Component fromString(String text) {
-        return componentSerializer.deserialize(text);
+        return componentSerializer.deserialize(color(text));
     }
 
 

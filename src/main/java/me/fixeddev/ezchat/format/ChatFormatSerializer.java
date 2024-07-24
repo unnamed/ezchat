@@ -1,6 +1,6 @@
 package me.fixeddev.ezchat.format;
 
-import me.fixeddev.ezchat.format.part.EasyChatPartConverter;
+import me.fixeddev.ezchat.format.part.PartConverterRegistry;
 import me.fixeddev.ezchat.replacer.PlaceholderReplacer;
 import me.fixeddev.ezchat.util.ColorReplacement;
 import net.kyori.adventure.audience.Audience;
@@ -18,10 +18,12 @@ public class ChatFormatSerializer {
                     .useUnusualXRepeatedCharacterHexFormat()
                     .build();
     private boolean paper = true;
-    private final EasyChatPartConverter easyChatPartConverter = new EasyChatPartConverter();
+
+    // private final EasyChatPartConverter easyChatPartConverter = new EasyChatPartConverter();
+    private final PartConverterRegistry registry = new PartConverterRegistry();
 
     public Component constructJsonMessage(NewChatFormat chatFormat, Player player) {
-        return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player))
+        return chatFormat.asComponent(chatPart -> registry.getConverter(chatPart.getClass()).convert(chatPart, player))
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("{displayName}")
                         .replacement(displayName(player))
@@ -29,8 +31,7 @@ public class ChatFormatSerializer {
     }
 
     public Component constructJsonMessage(NewChatFormat chatFormat, Player player, Audience viewer) {
-        return chatFormat.asComponent(easyChatPartConverter.unsafeFunctionForPlayer(player,
-                        viewer))
+        return chatFormat.asComponent(chatPart -> registry.getConverter(chatPart.getClass()).convert(chatPart, player, viewer))
                 .replaceText(TextReplacementConfig.builder()
                         .matchLiteral("{displayName}")
                         .replacement(displayName(player))

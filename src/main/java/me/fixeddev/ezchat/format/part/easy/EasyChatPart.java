@@ -1,6 +1,7 @@
-package me.fixeddev.ezchat.format.part;
+package me.fixeddev.ezchat.format.part.easy;
 
 import me.fixeddev.ezchat.format.ClickAction;
+import me.fixeddev.ezchat.format.part.ChatPart;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;

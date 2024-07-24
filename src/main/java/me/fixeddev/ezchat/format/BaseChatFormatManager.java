@@ -1,6 +1,7 @@
 package me.fixeddev.ezchat.format;
 
-import me.fixeddev.ezchat.format.part.EasyChatPart;
+import me.fixeddev.ezchat.format.part.easy.EasyChatPart;
+import me.fixeddev.ezchat.format.part.mini.MiniChatPart;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -41,6 +42,8 @@ public class BaseChatFormatManager implements ChatFormatManager {
         ConfigurationSerialization.registerClass(BaseChatFormat.class);
 
         ConfigurationSerialization.registerClass(EasyChatPart.class);
+        ConfigurationSerialization.registerClass(MiniChatPart.class);
+
         ConfigurationSerialization.registerClass(NewChatFormat.class);
 
         configFile = new File(plugin.getDataFolder(), "formats.yml");

@@ -1,7 +1,7 @@
 package me.fixeddev.ezchat.format;
 
 import me.fixeddev.ezchat.format.part.ChatPart;
-import me.fixeddev.ezchat.format.part.EasyChatPart;
+import me.fixeddev.ezchat.format.part.easy.EasyChatPart;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
