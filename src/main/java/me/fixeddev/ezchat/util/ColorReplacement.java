@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class ColorReplacement {
 
-    public static final Pattern STRIP_FORMAT_PATTERN = Pattern.compile( "(?i)&[K-ORX]" );
-    public static final Pattern STRIP_COLOR_PATTERN = Pattern.compile( "(?i)&[0-9A-F]" );
+    public static final Pattern STRIP_FORMAT_PATTERN = Pattern.compile("(?i)&[K-ORX]", Pattern.CASE_INSENSITIVE);
+    public static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)&[0-9A-F]", Pattern.CASE_INSENSITIVE);
 
     private final static Pattern HEX_COLOR_PATTERN = Pattern.compile("&\\[([\\dA-Fa-f])([\\dA-Fa-f])," +
             "([\\dA-Fa-f])([\\dA-Fa-f])," +
